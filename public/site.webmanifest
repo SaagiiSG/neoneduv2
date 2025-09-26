@@ -1,0 +1,27 @@
+{
+  "name": "Neon Edu - Your Gateway to Global Education",
+  "short_name": "Neon Edu",
+  "description": "English language courses, IELTS preparation, and study abroad services in Mongolia",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#F4F4F4",
+  "theme_color": "#FF872F",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/Neon Edu Logo.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/Neon Edu Logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable any"
+    }
+  ],
+  "categories": ["education", "business"],
+  "lang": "en",
+  "dir": "ltr"
+}
