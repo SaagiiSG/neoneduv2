@@ -74,3 +74,4 @@ src/
 - This is designed for single admin user access
 - Store your Supabase credentials securely
 - Consider adding additional security measures for production use
+# neoneduv2
