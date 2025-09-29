@@ -47,7 +47,7 @@ export default function CoursesPage() {
   const handleCreate = async (data: Omit<Course, 'id' | 'created_at' | 'updated_at'>) => {
     try {
       // Ensure required fields have defaults
-      const courseData: Course = {
+      const courseData = {
         ...data,
         duration: data.duration || '',
         description: data.description || '',
@@ -66,7 +66,7 @@ export default function CoursesPage() {
   const handleUpdate = async (id: string, data: Omit<Course, 'id' | 'created_at' | 'updated_at'>) => {
     try {
       // Ensure required fields have defaults
-      const courseData: Course = {
+      const courseData = {
         ...data,
         duration: data.duration || '',
         description: data.description || '',
