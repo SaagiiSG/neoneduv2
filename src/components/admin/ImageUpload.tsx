@@ -122,7 +122,7 @@ export default function ImageUpload({
             ref={fileInputRef}
             type="file"
             accept="image/*"
-            onChange={(e) => handleFileSelect(e.target.files?.[0])}
+            onChange={(e) => handleFileSelect(e.target.files?.[0] ?? null)}
             className="hidden"
           />
           <button
@@ -145,7 +145,7 @@ export default function ImageUpload({
             ref={fileInputRef}
             type="file"
             accept="image/*"
-            onChange={(e) => handleFileSelect(e.target.files?.[0])}
+            onChange={(e) => handleFileSelect(e.target.files?.[0] ?? null)}
             className="hidden"
           />
           

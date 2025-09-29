@@ -217,7 +217,7 @@ export default function TeamMemberForm({ member, onSubmit, onCancel }: TeamMembe
               className={`w-full text-base text-black resize-none pr-20 ${errors.bio ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : isFieldModified('bio') ? 'border-orange-400 focus:border-orange-500 focus:ring-orange-500' : 'border-gray-300 focus:border-blue-500 focus:ring-blue-500'}`}
               rows={4}
               disabled={isSubmitting}
-              placeholder={member ? `Current bio: ${member.bio.substring(0, 50)}${member.bio.length > 50 ? '...' : ''}` : "Write a brief description about this team member..."}
+              placeholder={member ? `Current bio: ${member.bio?.substring(0, 50)}${(member.bio?.length ?? 0) > 50 ? '...' : ''}` : "Write a brief description about this team member..."}
               onFocus={(e) => {
                 if (member && e.target.value === member.bio) {
                   e.target.select();
