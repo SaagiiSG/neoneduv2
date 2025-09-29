@@ -12,16 +12,16 @@ import { ChevronRight, GraduationCap, Phone, Mail, Facebook, Instagram, ArrowUpR
 import Teamcard from '@/components/Teamcard'
 import { motion, useReducedMotion } from 'framer-motion'
 import Link from 'next/link'
-import { 
-  getTeamMembers, 
-  getCourses, 
-  getStudyAbroadPrograms,
-  getHistoryData,
-  transformTeamData,
-  transformCourseData,
-  transformStudyAbroadData
-} from '@/lib/data'
-import { sendContactEmail } from '@/lib/emailServiceSimple'
+// import { 
+//   getTeamMembers, 
+//   getCourses, 
+//   getStudyAbroadPrograms,
+//   getHistoryData,
+//   transformTeamData,
+//   transformCourseData,
+//   transformStudyAbroadData
+// } from '@/lib/data'
+// import { sendContactEmail } from '@/lib/emailServiceSimple'
 
 
 export default function Home() {
@@ -48,38 +48,11 @@ export default function Home() {
   
   // Fetch data from database on component mount
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const [teamMembers, courses, studyAbroad, history] = await Promise.all([
-          getTeamMembers(),
-          getCourses(),
-          getStudyAbroadPrograms(),
-          getHistoryData()
-        ]);
-
-        console.log('Raw team data:', teamMembers);
-        console.log('Raw course data:', courses);
-        
-        const transformedTeam = transformTeamData(teamMembers);
-        const transformedCourses = transformCourseData(courses);
-        
-        console.log('Transformed team data:', transformedTeam);
-        console.log('Transformed course data:', transformedCourses);
-        
-        setTeamData(transformedTeam);
-        setCourseData(transformedCourses);
-        setStudyAbroadData(transformStudyAbroadData(studyAbroad));
-        setHistoryData(history || []);
-      } catch (error) {
-        console.error('Error fetching data:', error);
-        // Fallback to empty arrays if database fetch fails
-        setTeamData([]);
-        setCourseData([]);
-        setStudyAbroadData([]);
-      }
-    };
-
-    fetchData();
+    // Temporarily disabled data fetching for debugging
+    setTeamData([]);
+    setCourseData([]);
+    setStudyAbroadData([]);
+    setHistoryData([]);
   }, []);
 
   const images = [
@@ -156,23 +129,18 @@ export default function Home() {
     if (validateForm()) {
       setIsSubmitting(true)
       try {
-        const result = await sendContactEmail(formData)
-
-        if (result.success) {
-          alert('Message sent successfully! We will get back to you soon.')
-          // Reset form
-          setFormData({
-            firstName: '',
-            lastName: '',
-            phone: '',
-            email: '',
-            message: ''
-          })
-          // Clear any form errors
-          setFormErrors({})
-        } else {
-          alert(`Error: ${result.error || 'Failed to send message'}`)
-        }
+        // Temporary: Show success message without EmailJS
+        alert('Contact form submitted successfully! (Email functionality will be added soon)')
+        // Reset form
+        setFormData({
+          firstName: '',
+          lastName: '',
+          phone: '',
+          email: '',
+          message: ''
+        })
+        // Clear any form errors
+        setFormErrors({})
       } catch (err) {
         console.error('Form submission error:', err)
         alert('Failed to send message. Please try again.')
