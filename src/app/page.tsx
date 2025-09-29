@@ -1330,7 +1330,7 @@ export default function Home() {
                   />
                   <div className='w-full flex flex-col sm:flex-row items-start sm:items-center justify-start gap-2 text-[14px] sm:text-[16px]'> 
                     <Phone className='text-[#FF872F] w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0 mt-0.5 sm:mt-0' /> 
-                    <p className='break-words'>(+976) 9906-7781 (+976) 9906-5562</p>
+                    <p className='break-words'>(+976) 9906-7781, (+976) 9906-5562</p>
                   </div>
                   <div className='flex flex-col sm:flex-row items-start sm:items-center justify-start gap-2 text-[14px] sm:text-[16px]'> 
                     <Mail className='text-[#FF872F] w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0 mt-0.5 sm:mt-0' /> 
@@ -1344,20 +1344,17 @@ export default function Home() {
                     </div>
                   </div>
                   <div className='flex items-center justify-start gap-3'>
-                    <Facebook className='text-[#FF872F] w-5 h-5 sm:w-6 sm:h-6 cursor-pointer hover:scale-110 transition-transform' />
-                    <Instagram className='text-[#FF872F] w-5 h-5 sm:w-6 sm:h-6 cursor-pointer hover:scale-110 transition-transform'/>
+                    <Facebook 
+                      className='text-[#FF872F] w-5 h-5 sm:w-6 sm:h-6 cursor-pointer hover:scale-110 transition-transform' 
+                      onClick={() => window.open('https://www.facebook.com/neonedu.mn', '_blank')}
+                    />
+                    <Instagram 
+                      className='text-[#FF872F] w-5 h-5 sm:w-6 sm:h-6 cursor-pointer hover:scale-110 transition-transform'
+                      onClick={() => window.open('https://www.instagram.com/neonedu.mn', '_blank')}
+                    />
                   </div>
                 </div>
-                <div className='w-full lg:w-auto flex flex-col items-start justify-start gap-4 sm:gap-5 lg:gap-6 lg:pl-6 lg:border-l-2 lg:border-[#707070] lg:ml-6'>
-                  <div className='grid grid-cols-2 sm:flex sm:flex-col gap-3 sm:gap-4 lg:gap-6'>
-                    <Link href="/" className='text-[#FAFAFA] underline hover:text-[#FF872F] duration-300 ease-in text-[14px] sm:text-[16px]'>Home</Link>
-                    <Link href="/aboutus" className='text-[#FAFAFA] underline hover:text-[#FF872F] duration-300 ease-in text-[14px] sm:text-[16px]'>About Us</Link>
-                    <Link href="/ourteam" className='text-[#FAFAFA] underline hover:text-[#FF872F] duration-300 ease-in text-[14px] sm:text-[16px]'>Our Team</Link>
-                    <Link href="/courses" className='text-[#FAFAFA] underline hover:text-[#FF872F] duration-300 ease-in text-[14px] sm:text-[16px]'>Courses</Link>
-                    <Link href="/studyabroad" className='text-[#FAFAFA] underline hover:text-[#FF872F] duration-300 ease-in text-[14px] sm:text-[16px]'>Study Abroad</Link>
-                    <Link href="/contact" className='text-[#FAFAFA] underline hover:text-[#FF872F] duration-300 ease-in text-[14px] sm:text-[16px]'>Contact</Link>
-                  </div>
-                </div>
+               
                 <p className='text-[#FAFAFA]/70 text-[12px] sm:text-[14px] lg:text-[16px] font-montserrat font-medium mt-4 lg:mt-0 lg:absolute lg:bottom-2 lg:right-6'>© 2025 Neon Edu</p>
             </motion.footer>
         </div>
