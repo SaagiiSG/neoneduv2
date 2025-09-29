@@ -68,7 +68,7 @@ export default function SidebarLayout({ children }: SidebarLayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
   const [user, setUser] = useState<any>(null);
-  const [sessionExpired, setSessionExpired] = useState(false);
+  const [, setSessionExpired] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
 
@@ -95,6 +95,25 @@ export default function SidebarLayout({ children }: SidebarLayoutProps) {
   }, [router]);
 
   // Session timeout effect
+  const handleLogout = React.useCallback(async (isSessionExpired = false) => {
+    try {
+      await supabase.auth.signOut();
+      localStorage.removeItem('supabase.auth.token');
+      localStorage.removeItem('admin.sidebar.collapsed');
+      
+      if (isSessionExpired) {
+        toast.error('Session expired. Please log in again.');
+      } else {
+        toast.success('Logged out successfully');
+      }
+      
+      router.push('/admin/login');
+    } catch (error) {
+      toast.error('Error logging out');
+      router.push('/admin/login');
+    }
+  }, [router]);
+
   React.useEffect(() => {
     const checkSessionTimeout = () => {
       const now = Date.now();
@@ -124,7 +143,7 @@ export default function SidebarLayout({ children }: SidebarLayoutProps) {
         document.removeEventListener(event, updateActivity, true);
       });
     };
-  }, [lastActivity]);
+  }, [lastActivity, SESSION_TIMEOUT, handleLogout]);
 
   React.useEffect(() => {
     const saved = localStorage.getItem('admin.sidebar.collapsed');
@@ -139,24 +158,6 @@ export default function SidebarLayout({ children }: SidebarLayoutProps) {
     localStorage.setItem('admin.sidebar.collapsed', next ? 'true' : 'false');
   };
 
-  const handleLogout = async (isSessionExpired = false) => {
-    try {
-      await supabase.auth.signOut();
-      localStorage.removeItem('supabase.auth.token');
-      localStorage.removeItem('admin.sidebar.collapsed');
-      
-      if (isSessionExpired) {
-        toast.error('Session expired. Please log in again.');
-      } else {
-        toast.success('Logged out successfully');
-      }
-      
-      router.push('/admin/login');
-    } catch (error) {
-      toast.error('Error logging out');
-      router.push('/admin/login');
-    }
-  };
 
   return (
     <div className="min-h-screen bg-gray-50">

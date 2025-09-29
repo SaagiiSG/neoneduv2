@@ -2,7 +2,7 @@
 
 import React, { useState, useRef } from 'react';
 import { motion } from 'framer-motion';
-import { X, Save, Globe, Upload, Image as ImageIcon } from 'lucide-react';
+import { X, Save, Globe, Image as ImageIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -98,7 +98,7 @@ export default function StudyAbroadForm({ program, onSubmit, onCancel }: StudyAb
   };
 
   const validateForm = () => {
-    let newErrors: {[key: string]: string} = {};
+    const newErrors: {[key: string]: string} = {};
     
     if (!formData.country.trim()) {
       newErrors.country = 'Country is required';

@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { ArrowLeft, Save, X, XCircle } from 'lucide-react';
+import { Save, X, XCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -52,7 +52,7 @@ export default function TeamMemberForm({ member, onSubmit, onCancel }: TeamMembe
   };
 
   const validateForm = () => {
-    let newErrors: {[key: string]: string} = {};
+    const newErrors: {[key: string]: string} = {};
     
     if (!formData.name.trim()) {
       newErrors.name = 'Name is required';

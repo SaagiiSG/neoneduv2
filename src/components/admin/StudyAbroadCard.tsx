@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Edit, Trash2 } from 'lucide-react';
+import Image from 'next/image';
 
 interface StudyAbroadCardProps {
   country: {
@@ -49,21 +50,21 @@ export default function StudyAbroadCard({ country, onEdit, onDelete }: StudyAbro
         <div className="w-full h-full absolute bg-black/45 left-0 top-0 z-20"></div>
         
         {/* Background image - prioritize uploaded image */}
-        <img 
+        <Image 
           src={country.uploadedImage || country.image} 
           alt={country.country} 
           className="absolute top-0 left-0 w-full h-full object-cover"
-          loading="lazy"
-          decoding="async"
+          fill
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
         />
         
         {/* Dots background */}
-        <img 
+        <Image 
           src={country.dotbg} 
           alt="" 
           className="absolute top-8 -right-14 w-full h-full z-30"
-          loading="lazy"
-          decoding="async"
+          fill
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
         />
       </div>
 
