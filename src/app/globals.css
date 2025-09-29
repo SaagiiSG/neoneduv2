@@ -26,20 +26,20 @@
     --foreground: #171717 !important;
   }
   
-  /* Override text colors but exclude grid containers (preview cards) */
-  .admin-page h1:not(.grid *),
-  .admin-page h2:not(.grid *),
-  .admin-page h3:not(.grid *),
-  .admin-page h4:not(.grid *),
-  .admin-page h5:not(.grid *),
-  .admin-page h6:not(.grid *),
-  .admin-page p:not(.grid *),
-  .admin-page span:not(.grid *),
-  .admin-page div:not(.grid *),
-  .admin-page button:not(.grid *),
-  .admin-page input:not(.grid *),
-  .admin-page textarea:not(.grid *),
-  .admin-page label:not(.grid *) {
+  /* Override text colors but exclude grid containers (preview cards) and white text elements */
+  .admin-page h1:not(.grid *):not(.text-white),
+  .admin-page h2:not(.grid *):not(.text-white),
+  .admin-page h3:not(.grid *):not(.text-white),
+  .admin-page h4:not(.grid *):not(.text-white),
+  .admin-page h5:not(.grid *):not(.text-white),
+  .admin-page h6:not(.grid *):not(.text-white),
+  .admin-page p:not(.grid *):not(.text-white),
+  .admin-page span:not(.grid *):not(.text-white),
+  .admin-page div:not(.grid *):not(.text-white),
+  .admin-page button:not(.grid *):not(.text-white),
+  .admin-page input:not(.grid *):not(.text-white),
+  .admin-page textarea:not(.grid *):not(.text-white),
+  .admin-page label:not(.grid *):not(.text-white) {
     color: #171717 !important;
   }
 }
