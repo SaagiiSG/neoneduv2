@@ -21,7 +21,7 @@ import {
   transformCourseData,
   transformStudyAbroadData
 } from '@/lib/data'
-// import { sendContactEmail } from '@/lib/emailServiceSimple'
+import { sendContactEmail } from '@/lib/emailServiceSimple'
 
 
 export default function Home() {
