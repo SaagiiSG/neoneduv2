@@ -12,15 +12,15 @@ import { ChevronRight, GraduationCap, Phone, Mail, Facebook, Instagram, ArrowUpR
 import Teamcard from '@/components/Teamcard'
 import { motion, useReducedMotion } from 'framer-motion'
 import Link from 'next/link'
-// import { 
-//   getTeamMembers, 
-//   getCourses, 
-//   getStudyAbroadPrograms,
-//   getHistoryData,
-//   transformTeamData,
-//   transformCourseData,
-//   transformStudyAbroadData
-// } from '@/lib/data'
+import { 
+  getTeamMembers, 
+  getCourses, 
+  getStudyAbroadPrograms,
+  getHistoryData,
+  transformTeamData,
+  transformCourseData,
+  transformStudyAbroadData
+} from '@/lib/data'
 // import { sendContactEmail } from '@/lib/emailServiceSimple'
 
 
@@ -48,11 +48,38 @@ export default function Home() {
   
   // Fetch data from database on component mount
   useEffect(() => {
-    // Temporarily disabled data fetching for debugging
-    setTeamData([]);
-    setCourseData([]);
-    setStudyAbroadData([]);
-    setHistoryData([]);
+    const fetchData = async () => {
+      try {
+        const [teamMembers, courses, studyAbroad, history] = await Promise.all([
+          getTeamMembers(),
+          getCourses(),
+          getStudyAbroadPrograms(),
+          getHistoryData()
+        ]);
+
+        console.log('Raw team data:', teamMembers);
+        console.log('Raw course data:', courses);
+        
+        const transformedTeam = transformTeamData(teamMembers);
+        const transformedCourses = transformCourseData(courses);
+        
+        console.log('Transformed team data:', transformedTeam);
+        console.log('Transformed course data:', transformedCourses);
+        
+        setTeamData(transformedTeam);
+        setCourseData(transformedCourses);
+        setStudyAbroadData(transformStudyAbroadData(studyAbroad));
+        setHistoryData(history || []);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+        // Fallback to empty arrays if database fetch fails
+        setTeamData([]);
+        setCourseData([]);
+        setStudyAbroadData([]);
+      }
+    };
+
+    fetchData();
   }, []);
 
   const images = [
