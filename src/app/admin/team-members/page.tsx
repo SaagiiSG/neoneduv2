@@ -18,7 +18,7 @@ export default function TeamMembersPage() {
 
   const fetchTeamMembers = async () => {
     try {
-      const data = await authenticatedApiCall('/api/team-members');
+      const data = await authenticatedApiCall('/api/team-members') as {success: boolean, data: TeamMember[], error?: string};
       if (data.success) {
         setTeamMembers(data.data);
       } else {
@@ -222,7 +222,7 @@ export default function TeamMembersPage() {
                 key={member.id}
                 member={member}
                 onEdit={() => handleEditMember(member)}
-                onDelete={() => handleDeleteMember(member.id)}
+                onDelete={() => handleDeleteMember(member.id!)}
               />
             ))}
           </div>

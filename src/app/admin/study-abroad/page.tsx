@@ -68,7 +68,7 @@ export default function StudyAbroadPage() {
     }
   };
 
-  const handleFormSubmit = async (formData: StudyAbroadProgram) => {
+  const handleFormSubmit = async (formData: Partial<StudyAbroadProgram>) => {
     try {
       const url = editingProgram ? `/api/study-abroad/${editingProgram.id}` : '/api/study-abroad';
       const method = editingProgram ? 'PUT' : 'POST';
@@ -264,9 +264,9 @@ export default function StudyAbroadPage() {
             {transformedPrograms.map((program) => (
               <StudyAbroadCard
                 key={program.id}
-                country={program}
+                country={{...program, id: program.id!}}
                 onEdit={() => handleEditProgram(programs.find(p => p.id === program.id)!)}
-                onDelete={() => handleDeleteProgram(program.id)}
+                onDelete={() => handleDeleteProgram(program.id!)}
               />
             ))}
           </div>

@@ -896,7 +896,7 @@ export default function Home() {
                 const currentTimeline = historyData.length > 0 ? historyData : timelineData;
                 return currentTimeline.map((item, index) => (
                 <motion.div 
-                  key={item.year || item.id} 
+                  key={item.year || (item as any).id} 
                   className={`${index === 0 ? 'pt-8' : 'pt-2'} lg:pl-12 pl-2 w-full h-full flex items-start justify-start gap-5`}
                   initial={{ opacity: 0, x: 30 }}
                   whileInView={{ opacity: 1, x: 0 }}
@@ -928,7 +928,7 @@ export default function Home() {
                       <p className='text-[#ff872f] -mb-6 -ml-2'>*</p>
                       <h2>{item.year}</h2>
                     </div>
-                    <p className='text-[18px] font-clash font-medium mt-4 pl-2'>{item.event || item.description}</p>
+                    <p className='text-[18px] font-clash font-medium mt-4 pl-2'>{(item as any).event || item.description}</p>
                   </motion.div>
                 </motion.div>
               ));
@@ -969,7 +969,7 @@ export default function Home() {
                    viewport={{ once: true, amount: 0.2 }}
                    transition={{ duration: 0.6, delay: index * 0.1, ease: [0.25, 0.46, 0.45, 0.94] }}
                  >
-                   <Teamcard name={item.name} image={item.image} position={item.position} ditem1={item.ditem1} ditem2={item.ditem2} ditem3={item.ditem3} />
+                   <Teamcard name={item.name} image={item.image} position={item.position || ''} ditem1={item.ditem1 || ''} ditem2={item.ditem2 || ''} ditem3={item.ditem3 || ''} />
                  </motion.div>
                 ))}
               </motion.div>
@@ -1012,14 +1012,14 @@ export default function Home() {
                     <div className='w-full h-full absolute top-0 left-0 z-10 bg-gradient-to-r from-black/65 from-30% to-transparent to-100% '></div>
                     <Image 
                       src={course.image} 
-                      alt={course.name} 
+                      alt={course.title} 
                       className='absolute top-0 left-0 w-full h-full object-cover'
                       fill
                       sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                     />
                     <div className='z-50'>
                         <div>
-                            <h1 className='text-[40px] font-montserrat font-medium text-[#DFDFDF] -tracking-[0.2rem]'>{course.name}</h1>
+                            <h1 className='text-[40px] font-montserrat font-medium text-[#DFDFDF] -tracking-[0.2rem]'>{course.title}</h1>
                             <p className='text-[12px] font-montserrat font-medium text-[#E0E0E0] tracking-[0%] -mt-2 ml-1'>{course.duration}</p>
                         </div>
                         <div className='absolute bottom-8 left-4 flex flex-col items-start gap-6'>
@@ -1029,8 +1029,8 @@ export default function Home() {
                             <p className='text-[14px] font-montserrat font-medium text-[#E0E0E0] tracking-[0%]'>Difficulty :</p>
                           </div>
                           <div className='flex flex-col items-start gap-2'>
-                            <p className='text-[16px] font-montserrat font-medium text-[#E0E0E0] tracking-[0%]'>{course.levelItem1}</p>
-                            <p className='text-[16px] font-montserrat font-medium text-[#E0E0E0] tracking-[0%]'>{course.levelItem2}</p>
+                            <p className='text-[16px] font-montserrat font-medium text-[#E0E0E0] tracking-[0%]'>{course.levelitem1}</p>
+                            <p className='text-[16px] font-montserrat font-medium text-[#E0E0E0] tracking-[0%]'>{course.levelitem2}</p>
                           </div>
                         </div>
                         <Button onClick={() => scrollToSection('contact')} className='absolute bottom-4 right-4 rounded-full border-1 border-[#BCBCBC] bg-white/20 backdrop-blur-sm hover:bg-white/30 hover:scale-105 duration-300 ease-in'> 
