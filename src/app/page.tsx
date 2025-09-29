@@ -156,18 +156,23 @@ export default function Home() {
     if (validateForm()) {
       setIsSubmitting(true)
       try {
-        // Temporary: Show success message without EmailJS
-        alert('Contact form submitted successfully! (Email functionality will be added soon)')
-        // Reset form
-        setFormData({
-          firstName: '',
-          lastName: '',
-          phone: '',
-          email: '',
-          message: ''
-        })
-        // Clear any form errors
-        setFormErrors({})
+        const result = await sendContactEmail(formData)
+
+        if (result.success) {
+          alert('Message sent successfully! We will get back to you soon.')
+          // Reset form
+          setFormData({
+            firstName: '',
+            lastName: '',
+            phone: '',
+            email: '',
+            message: ''
+          })
+          // Clear any form errors
+          setFormErrors({})
+        } else {
+          alert(`Error: ${result.error || 'Failed to send message'}`)
+        }
       } catch (err) {
         console.error('Form submission error:', err)
         alert('Failed to send message. Please try again.')
