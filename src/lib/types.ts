@@ -15,8 +15,14 @@ export interface Course {
   id?: string;
   title: string;
   description: string;
+  link?: string;
+  category?: string;
   duration: string;
+  levelitem1?: string;
+  levelitem2?: string;
   image: string;
+  created_at?: string;
+  updated_at?: string;
   order?: number;
 }
 

@@ -8,20 +8,7 @@ import Image from 'next/image';
 import CourseForm from '@/components/admin/CourseForm';
 import { coursesAPI } from '@/lib/api';
 import SidebarLayout from '@/components/admin/SidebarLayout';
-
-interface Course {
-  id: string;
-  title: string;
-  description: string;
-  link: string;
-  category: string;
-  duration?: string;
-  levelitem1?: string;
-  levelitem2?: string;
-  image?: string;
-  created_at: string;
-  updated_at: string;
-}
+import { Course } from '@/lib/types';
 
 export default function CoursesPage() {
   const [courses, setCourses] = useState<Course[]>([]);

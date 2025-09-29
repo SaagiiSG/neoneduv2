@@ -8,19 +8,7 @@ import { Input } from '@/components/ui/input';
 import Image from 'next/image';
 import toast from 'react-hot-toast';
 
-interface Course {
-  id: string;
-  title: string;
-  description?: string;
-  link?: string;
-  category?: string;
-  duration?: string;
-  levelitem1?: string;
-  levelitem2?: string;
-  image?: string;
-  created_at: string;
-  updated_at: string;
-}
+import { Course } from '@/lib/types';
 
 interface CourseFormProps {
   course?: Course | null;
