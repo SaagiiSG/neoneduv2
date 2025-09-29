@@ -13,16 +13,26 @@ const supabase = createClient(supabaseUrl, supabaseServiceKey, {
 });
 
 export async function GET(request) {
-  // Authenticate the request
-  const authResult = await authenticateRequest(request);
-  if (authResult.error) {
-    return NextResponse.json(
-      { success: false, error: authResult.error },
-      { status: authResult.status }
-    );
-  }
-
   try {
+    // Simple authentication check - get session from cookies
+    const authHeader = request.headers.get('Authorization');
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return NextResponse.json(
+        { success: false, error: 'No authorization token provided' },
+        { status: 401 }
+      );
+    }
+
+    const token = authHeader.substring(7);
+    
+    // Verify token with Supabase
+    const { data: { user }, error: authError } = await supabase.auth.getUser(token);
+    if (authError || !user) {
+      return NextResponse.json(
+        { success: false, error: 'Invalid token' },
+        { status: 401 }
+      );
+    }
     const { data: teamMembers, error } = await supabase
       .from('team_members')
       .select('*')

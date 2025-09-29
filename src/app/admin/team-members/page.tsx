@@ -8,9 +8,16 @@ import { TeamMemberCard } from '@/components/admin/PreviewCards';
 import TeamMemberForm from '@/components/admin/TeamMemberForm';
 import { authenticatedApiCall } from '@/lib/apiClient';
 import { TeamMember } from '@/lib/types';
+import { createClient } from '@supabase/supabase-js';
+import { useRouter } from 'next/navigation';
+
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 
 export default function TeamMembersPage() {
+  const router = useRouter();
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
@@ -18,15 +25,33 @@ export default function TeamMembersPage() {
 
   const fetchTeamMembers = async () => {
     try {
+      console.log('Fetching team members...');
+      
+      // Check session first
+      const { data: { session } } = await supabase.auth.getSession();
+      console.log('Session exists:', !!session);
+      console.log('Session user:', session?.user?.email);
+      
+      if (!session) {
+        console.error('No session found');
+        toast.error('No active session. Please log in again.');
+        router.push('/admin/login');
+        return;
+      }
+      
       const data = await authenticatedApiCall('/api/team-members') as {success: boolean, data: TeamMember[], error?: string};
+      console.log('API response:', data);
+      
       if (data.success) {
         setTeamMembers(data.data);
+        console.log('Team members loaded:', data.data.length);
       } else {
         throw new Error(data.error || 'Failed to fetch team members');
       }
     } catch (error) {
       console.error('Error fetching team members:', error);
-      toast.error('Failed to fetch team members');
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      toast.error(`Failed to fetch team members: ${errorMessage}`);
     } finally {
       setLoading(false);
     }
