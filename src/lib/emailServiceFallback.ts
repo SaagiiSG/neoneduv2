@@ -8,6 +8,35 @@ export interface ContactFormData {
 
 export const sendContactEmail = async (formData: ContactFormData): Promise<{ success: boolean; error?: string }> => {
   try {
+    // First try the server-side API route
+    const response = await fetch('/api/send-email', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(formData),
+    });
+
+    const result = await response.json();
+
+    if (result.success) {
+      console.log('Email sent successfully via API route');
+      return { success: true };
+    } else {
+      console.log('API route failed, trying EmailJS fallback:', result.error);
+      // Fall back to EmailJS
+      return await sendEmailViaEmailJS(formData);
+    }
+
+  } catch (error) {
+    console.log('API route error, trying EmailJS fallback:', error);
+    // Fall back to EmailJS
+    return await sendEmailViaEmailJS(formData);
+  }
+};
+
+const sendEmailViaEmailJS = async (formData: ContactFormData): Promise<{ success: boolean; error?: string }> => {
+  try {
     // Check if we're in browser environment
     if (typeof window === 'undefined') {
       throw new Error('EmailJS can only be used in the browser environment');
@@ -54,11 +83,11 @@ export const sendContactEmail = async (formData: ContactFormData): Promise<{ suc
       EMAILJS_PUBLIC_KEY
     );
 
-    console.log('Email sent successfully:', result);
+    console.log('Email sent successfully via EmailJS:', result);
     return { success: true };
 
   } catch (error: any) {
-    console.error('Error sending email:', error);
+    console.error('EmailJS error:', error);
     
     // More detailed error handling
     let errorMessage = 'Failed to send email';
