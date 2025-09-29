@@ -162,7 +162,7 @@ export default function TeamMembersPage() {
               <div className="ml-4">
                 <p className="text-sm font-medium text-gray-600">Leadership</p>
                 <p className="text-2xl font-bold text-black">
-                  {teamMembers.filter(m => m.role.toLowerCase().includes('ceo') || m.role.toLowerCase().includes('founder')).length}
+                  {teamMembers.filter(m => m.role?.toLowerCase().includes('ceo') || m.role?.toLowerCase().includes('founder')).length}
                 </p>
               </div>
             </div>
@@ -175,7 +175,7 @@ export default function TeamMembersPage() {
               <div className="ml-4">
                 <p className="text-sm font-medium text-gray-600">Teachers</p>
                 <p className="text-2xl font-bold text-black">
-                  {teamMembers.filter(m => m.role.toLowerCase().includes('teacher')).length}
+                  {teamMembers.filter(m => m.role?.toLowerCase().includes('teacher')).length}
                 </p>
               </div>
             </div>
