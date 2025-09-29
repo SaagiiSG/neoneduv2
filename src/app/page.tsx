@@ -1,13 +1,11 @@
 'use client'
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import Navbar from '@/components/navbar'
 import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { ArrowRight, MapPin, Clock } from 'lucide-react'
-import AnimatedButton from '@/components/animated-button'
-import GlassSurface from '@/components/GlassSurface'
 import { ChevronRight, GraduationCap, Phone, Mail, Facebook, Instagram, ArrowUpRight, Copy, Send, Check} from 'lucide-react'
 import Teamcard from '@/components/Teamcard'
 import { motion, useReducedMotion } from 'framer-motion'
@@ -21,6 +19,7 @@ import {
   transformCourseData,
   transformStudyAbroadData
 } from '@/lib/data'
+import { TeamMember, Course, StudyAbroadProgram, HistoryItem } from '@/lib/types';
 import { sendContactEmail } from '@/lib/emailServiceSimple'
 
 
@@ -41,10 +40,10 @@ export default function Home() {
   const shouldReduceMotion = useReducedMotion()
   
   // Database data state
-  const [teamData, setTeamData] = useState<any[]>([])
-  const [courseData, setCourseData] = useState<any[]>([])
-  const [studyAbroadData, setStudyAbroadData] = useState<any[]>([])
-  const [historyData, setHistoryData] = useState<any[]>([])
+  const [teamData, setTeamData] = useState<TeamMember[]>([])
+  const [courseData, setCourseData] = useState<Course[]>([])
+  const [studyAbroadData, setStudyAbroadData] = useState<StudyAbroadProgram[]>([])
+  const [historyData, setHistoryData] = useState<HistoryItem[]>([])
   
   // Fetch data from database on component mount
   useEffect(() => {
@@ -234,7 +233,7 @@ export default function Home() {
   }
 
   // Preload all images function
-  const preloadImages = async () => {
+  const preloadImages = useCallback(async () => {
     const allImages = [
       // Hero carousel images
       ...images,
@@ -255,7 +254,7 @@ export default function Home() {
     const totalImages = allImages.length
 
     const imagePromises = allImages.map((src) => {
-      return new Promise((resolve, reject) => {
+      return new Promise((resolve) => {
         const img = new window.Image()
         img.onload = () => {
           loadedCount++
@@ -278,7 +277,7 @@ export default function Home() {
     } catch (error) {
       console.warn('Some images failed to preload:', error)
     }
-  }
+  }, [images, teamData, courseData, studyAbroadData])
 
   // Loading and auto-play functionality
   useEffect(() => {
@@ -301,7 +300,7 @@ export default function Home() {
     return () => {
       clearInterval(interval)
     }
-  }, [images.length])
+  }, [images.length, preloadImages])
 
   if (isLoading) {
     return (
@@ -1006,12 +1005,12 @@ export default function Home() {
                     transition={{ duration: 0.6, delay: index * 0.1, ease: [0.25, 0.46, 0.45, 0.94] }}
                   >
                     <div className='w-full h-full absolute top-0 left-0 z-10 bg-gradient-to-r from-black/65 from-30% to-transparent to-100% '></div>
-                    <img 
+                    <Image 
                       src={course.image} 
                       alt={course.name} 
                       className='absolute top-0 left-0 w-full h-full object-cover'
-                      loading="lazy"
-                      decoding="async"
+                      fill
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                     />
                     <div className='z-50'>
                         <div>
@@ -1078,19 +1077,19 @@ export default function Home() {
                        <p className='text-[16px] sm:text-[20px] md:text-[24px] font-montserrat font-regular text-[#FFFFFF] tracking-[0%] mt-4 sm:mt-5 md:mt-6 leading-relaxed'>{country.universities}</p>
                      </div>
                      <div className='w-full h-full absolute bg-black/45 left-0 top-0 z-20'></div>
-                     <img 
+                     <Image 
                        src={country.image} 
                        alt="" 
                        className='absolute top-0 left-0 w-full h-full object-cover'
-                       loading="lazy"
-                       decoding="async"
+                       fill
+                       sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                      />
-                     <img 
+                     <Image 
                        src={country.dotbg} 
                        alt="" 
                        className='absolute top-4 sm:top-6 md:top-8 -right-8 sm:-right-12 md:-right-14 w-full h-full z-30'
-                       loading="lazy"
-                       decoding="async"
+                       fill
+                       sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                      /> 
                    </motion.div>
                  ))}

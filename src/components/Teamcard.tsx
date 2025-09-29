@@ -1,7 +1,16 @@
 import React from 'react'
 import Image from 'next/image'
 
-const Teamcard = ({name, image, position, ditem1, ditem2, ditem3}:any) => {
+interface TeamcardProps {
+  name: string;
+  image: string;
+  position: string;
+  ditem1: string;
+  ditem2: string;
+  ditem3: string;
+}
+
+const Teamcard = ({name, image, position, ditem1, ditem2, ditem3}: TeamcardProps) => {
   return (
     <div className='w-full flex flex-col md:flex-row lg:flex-row gap-3 md:gap-4 items-start md:border-r-2 border-[#BBBBBB]/40 p-3 md:p-4  hover:bg-gray-50/50 transition-colors duration-300'>
       <Image 
