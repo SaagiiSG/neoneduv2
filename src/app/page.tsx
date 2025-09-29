@@ -873,7 +873,7 @@ export default function Home() {
                   viewport={{ once: true, amount: 0.3 }}
                   transition={{ duration: 0.6, delay: 0.8, ease: "easeOut" }}
                 >
-                  We are always open to establishing strategic partnerships with leading educational institutions and professional, ethical agencies worldwide.
+                  We are always open to establishing strategic partnerships with <br className='hidden md:block' /> leading educational institutions and professional, ethical agencies <br className='hidden md:block' /> worldwide.
                 </motion.h1>
               </div>
               <motion.div
