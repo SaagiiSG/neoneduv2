@@ -126,7 +126,7 @@ export function transformTeamData(dbData: TeamMember[]) {
     });
 }
 
-export function transformCourseData(dbData: Course[]) {
+export function transformCourseData(dbData: Course[]): Omit<Course, 'id' | 'created_at' | 'updated_at'>[] {
   // Define the specific order for courses
   const courseOrder = [
     'General English',
@@ -167,7 +167,7 @@ export function transformCourseData(dbData: Course[]) {
       }
       
       // If same category or not in list, sort alphabetically
-      return a.name.localeCompare(b.name);
+      return a.title.localeCompare(b.title);
     });
 }
 

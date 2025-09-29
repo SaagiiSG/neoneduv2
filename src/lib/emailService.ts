@@ -1,3 +1,5 @@
+import emailjs from '@emailjs/browser';
+
 // EmailJS configuration
 const EMAILJS_SERVICE_ID = process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID || '';
 const EMAILJS_TEMPLATE_ID = process.env.NEXT_PUBLIC_EMAILJS_TEMPLATE_ID || '';
@@ -69,10 +71,11 @@ export const sendEmailDirectly = async (formData: ContactFormData): Promise<{ su
       reply_to: formData.email,
     };
 
-    const result = await emailjs.sendForm(
+    const result = await emailjs.send(
       EMAILJS_SERVICE_ID,
       EMAILJS_TEMPLATE_ID,
-      templateParams
+      templateParams,
+      EMAILJS_PUBLIC_KEY
     );
 
     console.log('Email sent successfully:', result);

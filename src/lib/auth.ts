@@ -1,6 +1,7 @@
 import { createMiddlewareClient } from '@supabase/auth-helpers-nextjs';
 import { NextRequest, NextResponse } from 'next/server';
 import { AuthContext } from './types';
+import type { Session, User } from '@supabase/supabase-js';
 
 export async function authenticateRequest(request: NextRequest) {
   try {
@@ -12,19 +13,26 @@ export async function authenticateRequest(request: NextRequest) {
     if (authHeader && authHeader.startsWith('Bearer ')) {
       const token = authHeader.substring(7);
       
-      // Verify the token
-      const { data: { user }, error } = await supabase.auth.getUser(token);
+      // Verify the token and get session
+      const { data: { user }, error: userError } = await supabase.auth.getUser(token);
       
-      if (error) {
-        console.error('Token validation error:', error);
+      if (userError) {
+        console.error('Token validation error:', userError);
         return { error: 'Invalid token', status: 401 };
       }
       
       if (!user) {
         return { error: 'Invalid user', status: 401 };
       }
+
+      // Get the session with the token
+      const { data: { session: tokenSession }, error: sessionError } = await supabase.auth.getSession();
       
-      return { session: { user }, user, response };
+      if (sessionError || !tokenSession) {
+        return { error: 'Invalid session', status: 401 };
+      }
+      
+      return { session: tokenSession, user, response };
     }
     
     // Fallback to session-based auth
@@ -56,7 +64,7 @@ export async function authenticateRequest(request: NextRequest) {
 }
 
 export function createAuthenticatedHandler(
-  handler: (request: NextRequest, context: AuthContext) => Promise<NextResponse>
+  handler: (request: NextRequest, context: { session: Session; user: User }) => Promise<NextResponse>
 ) {
   return async (request: NextRequest) => {
     const authResult = await authenticateRequest(request);
@@ -67,10 +75,10 @@ export function createAuthenticatedHandler(
         { status: authResult.status }
       );
     }
-
+    
     return handler(request, { 
-      session: authResult.session, 
-      user: authResult.user 
+      session: authResult.session!, 
+      user: authResult.user! 
     });
   };
 }
