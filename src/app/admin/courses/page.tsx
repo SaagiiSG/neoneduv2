@@ -262,7 +262,7 @@ export default function CoursesPage() {
                           <Edit className="h-4 w-4" />
                         </button>
                         <button
-                          onClick={() => handleDelete(course.id)}
+                          onClick={() => handleDelete(course.id!)}
                           className="p-2.5 bg-white/90 backdrop-blur-sm text-gray-700 rounded-lg hover:bg-white hover:text-red-600 transition-all duration-200 shadow-lg"
                           title="Delete course"
                         >
