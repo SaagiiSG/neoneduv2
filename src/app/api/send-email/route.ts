@@ -24,7 +24,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Create transporter using Gmail SMTP
-    const transporter = nodemailer.createTransporter({
+    const transporter = nodemailer.createTransport({
       service: 'gmail',
       auth: {
         user: process.env.GMAIL_USER || 'neon.edu.mn@gmail.com',
