@@ -38,6 +38,7 @@ export async function GET() {
 export async function POST(request) {
   try {
     const body = await request.json();
+    console.log('Study abroad creation request body:', body);
     
     const { data: program, error } = await supabase
       .from('study_abroad')
@@ -46,6 +47,7 @@ export async function POST(request) {
       .single();
 
     if (error) {
+      console.error('Supabase error:', error);
       if (error.code === '23505') {
         return NextResponse.json(
           { success: false, message: 'Study abroad program with this information already exists' },
@@ -55,12 +57,14 @@ export async function POST(request) {
       throw error;
     }
 
+    console.log('Study abroad program created successfully:', program);
     return NextResponse.json({
       success: true,
       message: 'Study abroad program created successfully',
       data: program
     }, { status: 201 });
   } catch (error) {
+    console.error('Study abroad creation error:', error);
     return NextResponse.json(
       { success: false, message: 'Error creating study abroad program', error: error.message },
       { status: 500 }

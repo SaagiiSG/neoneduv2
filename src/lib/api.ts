@@ -61,13 +61,6 @@ export const studyAbroadAPI = {
   delete: (id: string) => api.delete(`/study-abroad/${id}`),
 };
 
-// Contact Info API
-export const contactInfoAPI = {
-  get: () => api.get('/contact-info'),
-  update: (data: any) => api.put('/contact-info', data),
-  addSocial: (data: any) => api.post('/contact-info/socials', data),
-  removeSocial: (socialId: string) => api.delete(`/contact-info/socials/${socialId}`),
-};
 
 export default api;
 

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { uploadImage } from '@/lib/cloudinary';
 
 export async function POST(request: NextRequest) {
   try {
@@ -15,20 +16,39 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'File must be an image' }, { status: 400 });
     }
 
-    // Validate file size (5MB max)
-    if (file.size > 5 * 1024 * 1024) {
-      return NextResponse.json({ error: 'File size must be less than 5MB' }, { status: 400 });
+    // Validate file size (2MB max to prevent timeouts)
+    if (file.size > 2 * 1024 * 1024) {
+      return NextResponse.json({ 
+        error: 'File size must be less than 2MB for faster uploads' 
+      }, { status: 400 });
     }
 
-    // For now, return a placeholder URL until Cloudinary is set up
-    // TODO: Replace with actual Cloudinary upload when credentials are configured
-    const placeholderUrl = `https://via.placeholder.com/300x200/cccccc/666666?text=${encodeURIComponent(file.name)}`;
+    console.log(`Starting upload for ${file.name} (${(file.size / 1024).toFixed(1)}KB) to folder: ${folder}`);
+
+    // Upload to Cloudinary with timeout
+    const uploadPromise = uploadImage(file, folder);
+    const timeoutPromise = new Promise((_, reject) => 
+      setTimeout(() => reject(new Error('Upload timeout after 90 seconds')), 90000)
+    );
+
+    const imageUrl = await Promise.race([uploadPromise, timeoutPromise]) as string;
     
-    return NextResponse.json({ url: placeholderUrl });
+    console.log('Upload completed successfully');
+    return NextResponse.json({ url: imageUrl });
   } catch (error) {
     console.error('Upload error:', error);
+    
+    let errorMessage = 'Failed to upload image';
+    if (error instanceof Error) {
+      if (error.message.includes('timeout')) {
+        errorMessage = 'Upload timed out. Please try a smaller image.';
+      } else if (error.message.includes('Request Timeout')) {
+        errorMessage = 'Cloudinary timeout. Please try again with a smaller image.';
+      }
+    }
+    
     return NextResponse.json(
-      { error: 'Failed to upload image' }, 
+      { error: errorMessage }, 
       { status: 500 }
     );
   }

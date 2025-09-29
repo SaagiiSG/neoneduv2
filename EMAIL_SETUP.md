@@ -1,61 +1,59 @@
-# Email Setup Instructions
+# EmailJS Setup Instructions
 
-## Contact Form Email Functionality
+## 1. Create EmailJS Account and Service
 
-The contact form is now functional and will:
-1. Store submissions in your Supabase database
-2. Send email notifications (when configured)
+1. Go to [https://www.emailjs.com/](https://www.emailjs.com/)
+2. Sign up for a free account
+3. Create a new service (Gmail, Outlook, etc.)
+4. Create an email template for contact form submissions
 
-## Email Service Options
+## 2. Environment Variables
 
-### Option 1: EmailJS (Recommended for quick setup)
-1. Go to [EmailJS](https://www.emailjs.com/)
-2. Create a free account
-3. Set up an email service (Gmail, Outlook, etc.)
-4. Create an email template
-5. Add these environment variables to your `.env.local`:
+Add these environment variables to your `.env.local` file:
 
-```env
-NEXT_PUBLIC_EMAILJS_SERVICE_ID=your_service_id
-NEXT_PUBLIC_EMAILJS_TEMPLATE_ID=your_template_id
-NEXT_PUBLIC_EMAILJS_PUBLIC_KEY=your_public_key
+```bash
+# EmailJS Configuration
+NEXT_PUBLIC_EMAILJS_SERVICE_ID=your_service_id_here
+NEXT_PUBLIC_EMAILJS_TEMPLATE_ID=your_template_id_here
+NEXT_PUBLIC_EMAILJS_PUBLIC_KEY=your_public_key_here
 ```
 
-### Option 2: Webhook Service
-1. Set up a webhook service (Zapier, IFTTT, etc.)
-2. Add this environment variable to your `.env.local`:
+## 3. Email Template Variables
 
-```env
-NEXT_PUBLIC_EMAIL_WEBHOOK_URL=your_webhook_url
+Your EmailJS template should use these variables:
+
+- `{{from_name}}` - Full name (firstName + lastName)
+- `{{from_email}}` - User's email address
+- `{{phone}}` - User's phone number
+- `{{message}}` - User's message
+- `{{to_email}}` - Your business email
+- `{{subject}}` - Email subject line
+
+## 4. Sample Email Template
+
+**Subject:** `{{subject}}`
+
+**Body:**
+```
+New contact form submission from Neon Edu website:
+
+Name: {{from_name}}
+Email: {{from_email}}
+Phone: {{phone}}
+
+Message:
+{{message}}
+
+---
+This message was sent from the Neon Edu contact form.
 ```
 
-### Option 3: Server-side Email Service
-For production, consider integrating with:
-- SendGrid
-- Resend
-- Nodemailer with SMTP
+## 5. Testing
 
-## Database Setup
+After setting up the environment variables, the contact form will automatically use EmailJS to send emails.
 
-Make sure your Supabase database has a `contact_submissions` table with these columns:
+## 6. Security Notes
 
-```sql
-CREATE TABLE contact_submissions (
-  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
-  first_name TEXT NOT NULL,
-  last_name TEXT NOT NULL,
-  phone TEXT NOT NULL,
-  email TEXT NOT NULL,
-  message TEXT NOT NULL,
-  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
-);
-```
-
-## Current Status
-
-✅ Contact form submissions are stored in Supabase
-✅ Form validation is working
-✅ Loading states are implemented
-⏳ Email notifications (requires configuration)
-
-The form will work without email configuration - submissions will be stored in the database and you can check them manually or set up email notifications later.
+- The EmailJS public key is safe to expose in the frontend
+- Consider setting up email rate limiting in your EmailJS account
+- Monitor your email usage to avoid hitting limits on the free plan

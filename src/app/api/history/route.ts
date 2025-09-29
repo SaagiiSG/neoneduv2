@@ -16,7 +16,21 @@ export async function GET() {
       .order('year', { ascending: false })
       .order('created_at', { ascending: false })
 
-    if (error) throw error
+    if (error) {
+      if (error.code === 'PGRST116' || error.message.includes('schema cache')) {
+        return NextResponse.json({ 
+          success: false, 
+          message: 'History table not found. Please create it in Supabase dashboard.',
+          error: 'Table not found',
+          instructions: {
+            step1: 'Go to https://supabase.com/dashboard',
+            step2: 'Select your project and go to SQL Editor',
+            step3: 'Run the SQL from server/database/migrations/005_create_history.sql'
+          }
+        }, { status: 404 })
+      }
+      throw error
+    }
 
     return NextResponse.json({ success: true, count: data?.length || 0, data })
   } catch (error: any) {

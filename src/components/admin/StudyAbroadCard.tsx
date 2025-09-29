@@ -12,6 +12,7 @@ interface StudyAbroadCardProps {
     universities: string;
     image: string;
     dotbg: string;
+    uploadedImage?: string;
   };
   onEdit: () => void;
   onDelete: () => void;
@@ -47,9 +48,9 @@ export default function StudyAbroadCard({ country, onEdit, onDelete }: StudyAbro
         {/* Background overlay */}
         <div className="w-full h-full absolute bg-black/45 left-0 top-0 z-20"></div>
         
-        {/* Background image */}
+        {/* Background image - prioritize uploaded image */}
         <img 
-          src={country.image} 
+          src={country.uploadedImage || country.image} 
           alt={country.country} 
           className="absolute top-0 left-0 w-full h-full object-cover"
           loading="lazy"
@@ -66,21 +67,21 @@ export default function StudyAbroadCard({ country, onEdit, onDelete }: StudyAbro
         />
       </div>
 
-      {/* Admin Controls Overlay */}
+      {/* Admin Controls Overlay - Team Member Style */}
       {showControls && (
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="absolute top-4 right-4 z-50 flex space-x-2"
+          className="absolute top-3 right-3 flex space-x-2 z-50"
         >
           <button
             onClick={(e) => {
               e.stopPropagation();
               onEdit();
             }}
-            className="p-2 bg-blue-600/80 hover:bg-blue-600 text-white rounded-full backdrop-blur-sm transition-all duration-200 hover:scale-110"
-            title="Edit country"
+            className="p-2.5 bg-white/90 backdrop-blur-sm text-gray-700 rounded-lg hover:bg-white hover:text-blue-600 transition-all duration-200 shadow-lg"
+            title="Edit program"
           >
             <Edit className="h-4 w-4" />
           </button>
@@ -89,8 +90,8 @@ export default function StudyAbroadCard({ country, onEdit, onDelete }: StudyAbro
               e.stopPropagation();
               onDelete();
             }}
-            className="p-2 bg-red-600/80 hover:bg-red-600 text-white rounded-full backdrop-blur-sm transition-all duration-200 hover:scale-110"
-            title="Delete country"
+            className="p-2.5 bg-white/90 backdrop-blur-sm text-gray-700 rounded-lg hover:bg-white hover:text-red-600 transition-all duration-200 shadow-lg"
+            title="Delete program"
           >
             <Trash2 className="h-4 w-4" />
           </button>

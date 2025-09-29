@@ -65,61 +65,105 @@ export async function getStudyAbroadPrograms() {
   }
 }
 
-// Fetch contact info from database
-export async function getContactInfo() {
+// Fetch history data from database
+export async function getHistoryData() {
   try {
     const { data, error } = await supabase
-      .from('contact_info')
-      .select(`
-        *,
-        contact_info_socials (
-          id,
-          platform,
-          url
-        )
-      `)
-      .limit(1)
-      .single();
+      .from('history')
+      .select('*')
+      .order('year', { ascending: true });
 
     if (error) {
-      console.error('Error fetching contact info:', error);
-      return null;
+      console.error('Error fetching history data:', error);
+      return [];
     }
 
-    return data;
+    return data || [];
   } catch (error) {
-    console.error('Error fetching contact info:', error);
-    return null;
+    console.error('Error fetching history data:', error);
+    return [];
   }
 }
 
 // Transform database data to match your original format
 export function transformTeamData(dbData: any[]) {
-  return dbData.map(member => ({
-    name: member.name,
-    image: member.image,
-    position: member.role,
-    ditem1: member.bio,
-    ditem2: '',
-    ditem3: ''
-  }));
+  // Define the specific order for team members (using exact names from database)
+  const teamOrder = [
+    'Dalantai.E',
+    'Anar.P', 
+    'Enkhjin. G',
+    'Kherlen. Sh',
+    'Mandakhjargal.E',
+    'Enkhjin. T',
+    'Yumjir. Ts'
+  ];
+
+  return dbData
+    .map(member => ({
+      name: member.name,
+      image: member.image,
+      position: member.role,
+      ditem1: member.bio,
+      ditem2: '',
+      ditem3: ''
+    }))
+    .sort((a, b) => {
+      const indexA = teamOrder.indexOf(a.name);
+      const indexB = teamOrder.indexOf(b.name);
+      
+      // If both names are in the order list, sort by their position in the list
+      if (indexA !== -1 && indexB !== -1) {
+        return indexA - indexB;
+      }
+      
+      // If only one name is in the order list, prioritize it
+      if (indexA !== -1) return -1;
+      if (indexB !== -1) return 1;
+      
+      // If neither name is in the order list, sort alphabetically
+      return a.name.localeCompare(b.name);
+    });
 }
 
 export function transformCourseData(dbData: any[]) {
-  return dbData.map(course => ({
-    name: course.title,
-    duration: course.description.includes('months') ? 
-      course.description.match(/\d+ months/)?.[0] || '4 months' : '4 months',
-    image: course.category === 'General English' ? '/classroom2.svg' :
-           course.category === 'IELTS Preparation' ? '/classroom1.png' :
-           '/office.svg',
-    levelItem1: course.description.includes('Beginner') ? 'Beginner' :
-                course.description.includes('Upper Intermediate') ? 'Upper Intermediate' :
-                'Research methodology',
-    levelItem2: course.description.includes('Intermediate') ? 'Intermediate' :
-                course.description.includes('Advanced') ? 'Advanced' :
-                'Academic writing'
-  }));
+  // Define the specific order for courses
+  const courseOrder = [
+    'General English',
+    'IELTS Preparation', 
+    'Academic English'
+  ];
+
+  return dbData
+    .map(course => ({
+      name: course.title,
+      duration: course.duration || (course.description?.includes('months') ? 
+        course.description.match(/\d+ months/)?.[0] || '4 months' : '4 months'),
+      image: course.image || (course.title === 'General English' ? '/classroom2.svg' :
+             course.title === 'IELTS Preparation' ? '/classroom1.png' :
+             course.title === 'Academic English' ? '/office.svg' :
+             course.category === 'General English' ? '/classroom2.svg' :
+             course.category === 'IELTS Preparation' ? '/classroom1.png' :
+             course.category === 'Academic English' ? '/office.svg' :
+             '/office.svg'),
+      levelItem1: course.levelitem1 || (course.description?.includes('Beginner') ? 'Beginner' :
+                  course.description?.includes('Upper Intermediate') ? 'Upper Intermediate' :
+                  'Research methodology'),
+      levelItem2: course.levelitem2 || (course.description?.includes('Intermediate') ? 'Intermediate' :
+                  course.description?.includes('Advanced') ? 'Advanced' :
+                  'Academic writing')
+    }))
+    .sort((a, b) => {
+      // Sort by category first
+      const categoryA = courseOrder.indexOf(a.name) !== -1 ? courseOrder.indexOf(a.name) : 999;
+      const categoryB = courseOrder.indexOf(b.name) !== -1 ? courseOrder.indexOf(b.name) : 999;
+      
+      if (categoryA !== categoryB) {
+        return categoryA - categoryB;
+      }
+      
+      // If same category or not in list, sort alphabetically
+      return a.name.localeCompare(b.name);
+    });
 }
 
 export function transformStudyAbroadData(dbData: any[]) {
@@ -152,9 +196,16 @@ export function transformStudyAbroadData(dbData: any[]) {
       }
     };
 
-    const imageInfo = countryImageMap[program.country] || {
+    // Use uploaded image if available, otherwise fall back to country-based image
+    const uploadedImage = program.image;
+    const countryImageInfo = countryImageMap[program.country] || {
       image: '/Neon Edu v3 (2)/china.svg', // fallback
       dotbg: '/china dots.svg'
+    };
+    
+    const imageInfo = {
+      image: uploadedImage || countryImageInfo.image,
+      dotbg: countryImageInfo.dotbg
     };
 
     // Split the description into two parts: main description and universities

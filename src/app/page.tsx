@@ -15,12 +15,13 @@ import Link from 'next/link'
 import { 
   getTeamMembers, 
   getCourses, 
-  getStudyAbroadPrograms, 
-  getContactInfo,
+  getStudyAbroadPrograms,
+  getHistoryData,
   transformTeamData,
   transformCourseData,
   transformStudyAbroadData
 } from '@/lib/data'
+import { sendContactEmail } from '@/lib/emailServiceSimple'
 
 
 export default function Home() {
@@ -43,23 +44,32 @@ export default function Home() {
   const [teamData, setTeamData] = useState<any[]>([])
   const [courseData, setCourseData] = useState<any[]>([])
   const [studyAbroadData, setStudyAbroadData] = useState<any[]>([])
-  const [contactInfo, setContactInfo] = useState<any>(null)
+  const [historyData, setHistoryData] = useState<any[]>([])
   
   // Fetch data from database on component mount
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [teamMembers, courses, studyAbroad, contact] = await Promise.all([
+        const [teamMembers, courses, studyAbroad, history] = await Promise.all([
           getTeamMembers(),
           getCourses(),
           getStudyAbroadPrograms(),
-          getContactInfo()
+          getHistoryData()
         ]);
 
-        setTeamData(transformTeamData(teamMembers));
-        setCourseData(transformCourseData(courses));
+        console.log('Raw team data:', teamMembers);
+        console.log('Raw course data:', courses);
+        
+        const transformedTeam = transformTeamData(teamMembers);
+        const transformedCourses = transformCourseData(courses);
+        
+        console.log('Transformed team data:', transformedTeam);
+        console.log('Transformed course data:', transformedCourses);
+        
+        setTeamData(transformedTeam);
+        setCourseData(transformedCourses);
         setStudyAbroadData(transformStudyAbroadData(studyAbroad));
-        setContactInfo(contact);
+        setHistoryData(history || []);
       } catch (error) {
         console.error('Error fetching data:', error);
         // Fallback to empty arrays if database fetch fails
@@ -146,17 +156,9 @@ export default function Home() {
     if (validateForm()) {
       setIsSubmitting(true)
       try {
-        const response = await fetch('/api/contact', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(formData),
-        })
+        const result = await sendContactEmail(formData)
 
-        const result = await response.json()
-
-        if (response.ok) {
+        if (result.success) {
           alert('Message sent successfully! We will get back to you soon.')
           // Reset form
           setFormData({
@@ -166,11 +168,13 @@ export default function Home() {
             email: '',
             message: ''
           })
+          // Clear any form errors
+          setFormErrors({})
         } else {
           alert(`Error: ${result.error || 'Failed to send message'}`)
         }
-      } catch (error) {
-        console.error('Form submission error:', error)
+      } catch (err) {
+        console.error('Form submission error:', err)
         alert('Failed to send message. Please try again.')
       } finally {
         setIsSubmitting(false)
@@ -243,7 +247,8 @@ export default function Home() {
       // Other images
       "/Neon Edu Logo.png",
       "/Australia Hero Neon Edu.png",
-      "/ourServiceBgDots.svg"
+      "/ourServiceBgDots.svg",
+      "/our focus bg.svg"
     ]
 
     let loadedCount = 0
@@ -350,7 +355,7 @@ export default function Home() {
             transition={{ duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }}
           >
             <motion.h1 
-              className='text-[20px] text-center md:text-left md:text-[44px] lg:text-[66px] w-full text-nowrap text-[#616161] md:leading-[48px] tracking-normal'
+              className='text-[28px] text-center md:text-left md:text-[44px] lg:text-[66px] w-full text-nowrap text-[#616161] md:leading-[48px] tracking-normal'
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4, delay: 0.1, ease: [0.25, 0.46, 0.45, 0.94] }}
@@ -358,7 +363,7 @@ export default function Home() {
               YOUR GATEWAY 
             </motion.h1>
             <motion.h1 
-              className='text-[28px] text-center md:text-left md:text-[64px] lg:text-[92px] md:leading-[68px] text-[#414040] tracking-wide'
+              className='text-[40px] text-center md:text-left md:text-[64px] lg:text-[92px] md:leading-[68px] text-[#414040] tracking-wide'
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4, delay: 0.2, ease: [0.25, 0.46, 0.45, 0.94] }}
@@ -366,7 +371,7 @@ export default function Home() {
               TO GLOBAL
             </motion.h1>
             <motion.h1 
-              className='text-[28px] md:text-[64px] lg:text-[92px] text-center md:text-left md:leading-[68px] text-[#2c2c2c] tracking-normal'
+              className='text-[40px] md:text-[64px] lg:text-[92px] text-center md:text-left md:leading-[68px] text-[#2c2c2c] tracking-normal'
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4, delay: 0.3, ease: [0.25, 0.46, 0.45, 0.94] }}
@@ -727,13 +732,20 @@ export default function Home() {
         </section>
         {/* Our focus  */}
         <motion.div 
-          className='w-full h-auto md:h-screen flex md:flex-row flex-col gap-6 md:gap-0 py-12 md:py-0 items-center md:justify-center justify-start'
+          className='w-full h-auto md:h-screen flex md:flex-row flex-col gap-6 md:gap-0 py-12 md:py-0 items-center md:justify-center justify-start relative'
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: true, amount: 0.3 }}
           transition={{ duration: 0.8, ease: "easeOut" }}
         >
-          <motion.div className='w-full h-full flex flex-col items-center justify-center'>
+              <Image 
+                src="/our focus bg.svg" 
+                alt='Our Focus' 
+                width={800} 
+                height={500}
+                className='absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-0'
+              />
+              <motion.div className='w-full h-full flex flex-col items-center justify-center relative z-10'>
             {/* Mobile Header - Only visible on mobile */}
             <motion.div 
               className='md:hidden w-[90%] flex justify-center z-30 mb-7'
@@ -749,7 +761,7 @@ export default function Home() {
               </div>
             </motion.div>
 
-            <motion.div 
+          <motion.div 
               className='z-20 w-[90%] h-auto flex flex-col md:flex-row-reverse items-start justify-start gap-6 md:gap-10 md:border-t-2 border-[#BBBBBB] md:relative md:bottom-auto'
               initial={{ opacity: 0, y: 50 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -800,7 +812,7 @@ export default function Home() {
                   
               </motion.div>
             </motion.div>
-            <motion.div 
+              <motion.div 
               className='w-[98%] h-fit flex flex-col items-center justify-center mt-12 md:mt-20 px-4'
               initial={{ opacity: 0, y: 50 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -836,10 +848,11 @@ export default function Home() {
               >
                 <Button onClick={() => scrollToSection('contact')} className='rounded-full bg-transparent text-[#616161] border-1 border-[#616161] hover:bg-transparent hover:scale-105 duration-300 ease-in flex-row-reverse mt-6' variant='outline'><ArrowRight className='w-4 h-4' /> <p> contact us </p></Button>
               </motion.div>     
-            </motion.div>
+              </motion.div>
+            </motion.div> 
           </motion.div>
-          
-          </motion.div>
+
+          {/* history */}
           <motion.div 
             id="about"
             className='w-full min-h-screen flex items-start justify-center py-4 text-[#333333]'
@@ -875,9 +888,11 @@ export default function Home() {
             </motion.div> 
 
            <section className='w-full h-full flex flex-col items-start justify-start'>
-              {timelineData.map((item, index) => (
+              {(() => {
+                const currentTimeline = historyData.length > 0 ? historyData : timelineData;
+                return currentTimeline.map((item, index) => (
                 <motion.div 
-                  key={item.year} 
+                  key={item.year || item.id} 
                   className={`${index === 0 ? 'pt-8' : 'pt-2'} lg:pl-12 pl-2 w-full h-full flex items-start justify-start gap-5`}
                   initial={{ opacity: 0, x: 30 }}
                   whileInView={{ opacity: 1, x: 0 }}
@@ -895,7 +910,7 @@ export default function Home() {
                     
                       <div className='w-1 h-[118px] bg-[#000000] rounded-full'></div>
                     
-                    {index === timelineData.length - 1 && (
+                    {index === currentTimeline.length - 1 && (
                       <div className='w-6 h-6 border-4 border-[#000000] rounded-full'></div>
                     )}
                   </motion.div>
@@ -909,10 +924,11 @@ export default function Home() {
                       <p className='text-[#ff872f] -mb-6 -ml-2'>*</p>
                       <h2>{item.year}</h2>
                     </div>
-                    <p className='text-[18px] font-clash font-medium mt-4 pl-2'>{item.description}</p>
+                    <p className='text-[18px] font-clash font-medium mt-4 pl-2'>{item.event || item.description}</p>
                   </motion.div>
                 </motion.div>
-              ))}
+              ));
+              })()}
             </section>
             </motion.div>
            </motion.div>
@@ -939,7 +955,7 @@ export default function Home() {
               whileInView={{ opacity: 1 }}
               viewport={{ once: true, amount: 0.1 }}
               transition={{ duration: 0.8, delay: 0.4, ease: "easeOut" }}
-            >
+              >
                 {teamData.map((item, index) => (
                  <motion.div
                    key={index}
@@ -1151,12 +1167,12 @@ export default function Home() {
                         </div>
                         <div className='flex items-center justify-start gap-2 text-[14px] sm:text-[16px]'> 
                           <Facebook className='w-4 h-4 sm:w-5 sm:h-5' /> 
-                          <a href="" className='hover:text-[#FF872F] transition-colors'>neon.edu.mn</a> 
+                          <a href="https://www.facebook.com/neon.edu.mn" className='hover:text-[#FF872F] transition-colors'>neon.edu.mn</a> 
                           <ArrowUpRight className='w-4 h-4' /> 
                         </div>
                         <div className='flex items-center justify-start gap-2 text-[14px] sm:text-[16px]'> 
                           <Instagram className='w-4 h-4 sm:w-5 sm:h-5' /> 
-                          <a href="" className='hover:text-[#FF872F] transition-colors'>@neon.edu.mn</a> 
+                          <a href="https://www.instagram.com/neon.edu.mn/" className='hover:text-[#FF872F] transition-colors'>@neon.edu.mn</a> 
                           <ArrowUpRight className='w-4 h-4' /> 
                         </div>
                       </div>

@@ -1,12 +1,13 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { motion } from 'framer-motion';
-import { X, Save } from 'lucide-react';
+import { X, Save, Globe, Upload, Image as ImageIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import ImageUpload from './ImageUpload';
+import Image from 'next/image';
+import toast from 'react-hot-toast';
 
 interface StudyAbroadProgram {
   id: string;
@@ -15,6 +16,7 @@ interface StudyAbroadProgram {
   description: string;
   universities: string;
   link: string;
+  image?: string;
 }
 
 interface StudyAbroadFormProps {
@@ -30,9 +32,12 @@ export default function StudyAbroadForm({ program, onSubmit, onCancel }: StudyAb
     description: program?.description || '',
     universities: program?.universities || '',
     link: program?.link || '',
+    image: program?.image || '',
   });
   const [errors, setErrors] = useState<{[key: string]: string}>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -40,9 +45,56 @@ export default function StudyAbroadForm({ program, onSubmit, onCancel }: StudyAb
     setErrors(prev => ({ ...prev, [name]: '' })); // Clear error on change
   };
 
-  const handleImageChange = (imageUrl: string) => {
-    // For study abroad, we don't have image upload yet, but keeping the structure
-    console.log('Image uploaded:', imageUrl);
+  const handleImageUpload = async (file: File) => {
+    if (!file) return;
+
+    // Validate file type
+    if (!file.type.startsWith('image/')) {
+      toast.error('Please select an image file');
+      return;
+    }
+
+    // Validate file size (2MB max for faster uploads)
+    if (file.size > 2 * 1024 * 1024) {
+      toast.error('Image size must be less than 2MB for faster uploads');
+      return;
+    }
+
+    setIsUploading(true);
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('folder', 'study-abroad');
+
+      const response = await fetch('/api/upload', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error('Upload failed');
+      }
+
+      const { url } = await response.json();
+      setFormData(prev => ({ ...prev, image: url }));
+      toast.success('Image uploaded successfully');
+    } catch (error) {
+      console.error('Upload error:', error);
+      toast.error('Failed to upload image');
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      handleImageUpload(file);
+    }
+  };
+
+  const removeImage = () => {
+    setFormData(prev => ({ ...prev, image: '' }));
   };
 
   const validateForm = () => {
@@ -58,6 +110,10 @@ export default function StudyAbroadForm({ program, onSubmit, onCancel }: StudyAb
     
     if (!formData.universities.trim()) {
       newErrors.universities = 'Universities information is required';
+    }
+    
+    if (!formData.image.trim()) {
+      newErrors.image = 'Background photo is required';
     }
     
     setErrors(newErrors);
@@ -77,10 +133,17 @@ export default function StudyAbroadForm({ program, onSubmit, onCancel }: StudyAb
       // Combine description and universities for database storage
       const combinedDescription = `${formData.description}|${formData.universities}`;
       
-      await onSubmit({
-        ...formData,
-        description: combinedDescription
-      });
+      // Prepare data for database
+      const submitData = {
+        program_name: formData.program_name,
+        country: formData.country,
+        description: combinedDescription,
+        universities: formData.universities,
+        image: formData.image || null,
+        link: 'https://neonedu.com' // Default link since database requires it
+      };
+      
+      await onSubmit(submitData);
     } catch (error) {
       console.error('Error submitting form:', error);
     } finally {
@@ -93,18 +156,26 @@ export default function StudyAbroadForm({ program, onSubmit, onCancel }: StudyAb
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
-      className="space-y-6"
+      className="space-y-8"
     >
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="text-2xl font-bold text-gray-900">
-          {program ? 'Edit Study Abroad Program' : 'Add Study Abroad Program'}
-        </h2>
+      <div className="flex items-center space-x-4 mb-8">
+        <div className="p-3 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-xl">
+          <Globe className="h-6 w-6 text-white" />
+        </div>
+        <div>
+          <h2 className="text-2xl font-bold text-black">
+            {program ? 'Edit Study Abroad Program' : 'Add Study Abroad Program'}
+          </h2>
+          <p className="text-gray-600 mt-1">
+            {program ? 'Update program information' : 'Add a new study abroad program'}
+          </p>
+        </div>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-6">
+      <form onSubmit={handleSubmit} className="space-y-8">
         {/* Program Name Field */}
-        <div>
-          <label htmlFor="program_name" className="block text-sm font-medium text-gray-700 mb-1">
+        <div className="space-y-2">
+          <label htmlFor="program_name" className="block text-sm font-semibold text-black">
             Program Name
           </label>
           <Input
@@ -113,14 +184,17 @@ export default function StudyAbroadForm({ program, onSubmit, onCancel }: StudyAb
             type="text"
             value={formData.program_name}
             onChange={handleInputChange}
-            className="w-full"
+            className="w-full h-12 text-base text-black border-gray-300 focus:border-purple-500 focus:ring-purple-500"
+            placeholder="Enter program name (optional)"
             disabled={isSubmitting}
           />
+          <p className="text-sm text-gray-600">Optional: Specific program name</p>
         </div>
 
+
         {/* Country Field */}
-        <div>
-          <label htmlFor="country" className="block text-sm font-medium text-gray-700 mb-1">
+        <div className="space-y-2">
+          <label htmlFor="country" className="block text-sm font-semibold text-black">
             Country *
           </label>
           <Input
@@ -129,15 +203,21 @@ export default function StudyAbroadForm({ program, onSubmit, onCancel }: StudyAb
             type="text"
             value={formData.country}
             onChange={handleInputChange}
-            className={`w-full ${errors.country ? 'border-red-500' : ''}`}
+            className={`w-full h-12 text-base text-black ${errors.country ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-gray-300 focus:border-purple-500 focus:ring-purple-500'}`}
+            placeholder="e.g., Australia, Singapore, South Korea"
             disabled={isSubmitting}
           />
-          {errors.country && <p className="mt-1 text-sm text-red-600">{errors.country}</p>}
+          {errors.country && (
+            <p className="text-sm text-red-600 flex items-center mt-1">
+              <span className="w-1 h-1 bg-red-500 rounded-full mr-2"></span>
+              {errors.country}
+            </p>
+          )}
         </div>
 
         {/* Description Field */}
-        <div>
-          <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-1">
+        <div className="space-y-2">
+          <label htmlFor="description" className="block text-sm font-semibold text-black">
             Description *
           </label>
           <Textarea
@@ -145,17 +225,23 @@ export default function StudyAbroadForm({ program, onSubmit, onCancel }: StudyAb
             name="description"
             value={formData.description}
             onChange={handleInputChange}
-            className={`w-full ${errors.description ? 'border-red-500' : ''}`}
+            className={`w-full text-base text-black resize-none ${errors.description ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-gray-300 focus:border-purple-500 focus:ring-purple-500'}`}
             rows={3}
+            placeholder="Describe the study abroad opportunities..."
             disabled={isSubmitting}
           />
-          {errors.description && <p className="mt-1 text-sm text-red-600">{errors.description}</p>}
-          <p className="mt-1 text-sm text-gray-500">This will be the main heading on the card</p>
+          {errors.description && (
+            <p className="text-sm text-red-600 flex items-center mt-1">
+              <span className="w-1 h-1 bg-red-500 rounded-full mr-2"></span>
+              {errors.description}
+            </p>
+          )}
+          <p className="text-sm text-gray-600">This will be the main heading on the card</p>
         </div>
 
         {/* Universities Field */}
-        <div>
-          <label htmlFor="universities" className="block text-sm font-medium text-gray-700 mb-1">
+        <div className="space-y-2">
+          <label htmlFor="universities" className="block text-sm font-semibold text-black">
             Universities Information *
           </label>
           <Textarea
@@ -163,39 +249,98 @@ export default function StudyAbroadForm({ program, onSubmit, onCancel }: StudyAb
             name="universities"
             value={formData.universities}
             onChange={handleInputChange}
-            className={`w-full ${errors.universities ? 'border-red-500' : ''}`}
+            className={`w-full text-base text-black resize-none ${errors.universities ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : 'border-gray-300 focus:border-purple-500 focus:ring-purple-500'}`}
             rows={2}
+            placeholder="List universities or educational institutions..."
             disabled={isSubmitting}
           />
-          {errors.universities && <p className="mt-1 text-sm text-red-600">{errors.universities}</p>}
-          <p className="mt-1 text-sm text-gray-500">This will be the supporting text on the card</p>
+          {errors.universities && (
+            <p className="text-sm text-red-600 flex items-center mt-1">
+              <span className="w-1 h-1 bg-red-500 rounded-full mr-2"></span>
+              {errors.universities}
+            </p>
+          )}
+          <p className="text-sm text-gray-600">This will be the supporting text on the card</p>
         </div>
 
-        {/* Link Field */}
-        <div>
-          <label htmlFor="link" className="block text-sm font-medium text-gray-700 mb-1">
-            Link (Optional)
+        {/* Image Upload Field */}
+        <div className="space-y-2">
+          <label className="block text-sm font-semibold text-black">
+            Upload Background Photo *
           </label>
-          <Input
-            id="link"
-            name="link"
-            type="url"
-            value={formData.link}
-            onChange={handleInputChange}
-            className="w-full"
-            disabled={isSubmitting}
-          />
-          <p className="mt-1 text-sm text-gray-500">External link for more information</p>
+          
+          {formData.image ? (
+            <div className="relative">
+              <div className="w-full h-48 bg-gray-100 rounded-lg overflow-hidden border-2 border-dashed border-gray-300">
+                <Image
+                  src={formData.image}
+                  alt="Uploaded image"
+                  width={400}
+                  height={200}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={removeImage}
+                className="absolute top-2 right-2 bg-white/90 hover:bg-white"
+                disabled={isSubmitting || isUploading}
+              >
+                <X className="h-4 w-4" />
+              </Button>
+            </div>
+          ) : (
+            <div
+              className="w-full h-48 border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center cursor-pointer hover:border-purple-500 hover:bg-purple-50/50 transition-colors group"
+              onClick={() => fileInputRef.current?.click()}
+            >
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                onChange={handleFileChange}
+                className="hidden"
+                disabled={isSubmitting || isUploading}
+              />
+              <div className="text-center">
+                {isUploading ? (
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-500 mx-auto mb-2"></div>
+                ) : (
+                  <div className="p-3 bg-purple-100 rounded-full mb-3 group-hover:bg-purple-200 transition-colors">
+                    <ImageIcon className="h-6 w-6 text-purple-600" />
+                  </div>
+                )}
+                <div className="text-center">
+                  <p className="text-sm font-medium text-gray-700 group-hover:text-purple-700">
+                    {isUploading ? 'Uploading...' : 'Click to upload background image'}
+                  </p>
+                  <p className="text-xs text-gray-500 mt-1">
+                    PNG, JPG up to 2MB
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
+          
+          {errors.image && (
+            <p className="text-sm text-red-600 flex items-center mt-1">
+              <span className="w-1 h-1 bg-red-500 rounded-full mr-2"></span>
+              {errors.image}
+            </p>
+          )}
+          
+          <p className="text-sm text-gray-600">Upload a background image for the study abroad program card</p>
         </div>
 
         {/* Form Actions */}
-        <div className="flex justify-end space-x-3 pt-6 border-t border-gray-200">
+        <div className="flex justify-end space-x-4 pt-8 border-t border-gray-200">
           <Button
             type="button"
             variant="outline"
             onClick={onCancel}
             disabled={isSubmitting}
-            className="flex items-center space-x-2"
+            className="flex items-center space-x-2 h-12 px-6 border-gray-300 hover:border-gray-400 hover:bg-gray-50"
           >
             <X className="h-4 w-4" />
             <span>Cancel</span>
@@ -204,7 +349,7 @@ export default function StudyAbroadForm({ program, onSubmit, onCancel }: StudyAb
           <Button
             type="submit"
             disabled={isSubmitting}
-            className="flex items-center space-x-2 bg-blue-600 hover:bg-blue-700"
+            className="flex items-center space-x-2 h-12 px-8 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-medium shadow-lg hover:shadow-xl transition-all duration-200"
           >
             {isSubmitting ? (
               <>

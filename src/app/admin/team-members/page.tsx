@@ -7,6 +7,7 @@ import toast from 'react-hot-toast';
 import SidebarLayout from '@/components/admin/SidebarLayout';
 import { TeamMemberCard } from '@/components/admin/PreviewCards';
 import TeamMemberForm from '@/components/admin/TeamMemberForm';
+import { authenticatedApiCall } from '@/lib/apiClient';
 
 interface TeamMember {
   id: string;
@@ -26,8 +27,7 @@ export default function TeamMembersPage() {
 
   const fetchTeamMembers = async () => {
     try {
-      const response = await fetch('/api/team-members');
-      const data = await response.json();
+      const data = await authenticatedApiCall('/api/team-members');
       if (data.success) {
         setTeamMembers(data.data);
       } else {
@@ -61,17 +61,12 @@ export default function TeamMembersPage() {
     }
 
     try {
-      const response = await fetch(`/api/team-members/${id}`, {
+      await authenticatedApiCall(`/api/team-members/${id}`, {
         method: 'DELETE',
       });
-
-      if (response.ok) {
-        toast.success('Team member deleted successfully');
-        fetchTeamMembers();
-      } else {
-        const error = await response.json();
-        throw new Error(error.error || 'Failed to delete team member');
-      }
+      
+      toast.success('Team member deleted successfully');
+      fetchTeamMembers();
     } catch (error) {
       console.error('Error deleting team member:', error);
       toast.error('Failed to delete team member');
@@ -83,23 +78,15 @@ export default function TeamMembersPage() {
       const url = editingMember ? `/api/team-members/${editingMember.id}` : '/api/team-members';
       const method = editingMember ? 'PUT' : 'POST';
 
-      const response = await fetch(url, {
+      await authenticatedApiCall(url, {
         method,
-        headers: {
-          'Content-Type': 'application/json',
-        },
         body: JSON.stringify(formData),
       });
 
-      if (response.ok) {
-        toast.success(editingMember ? 'Team member updated successfully' : 'Team member added successfully');
-        setShowForm(false);
-        setEditingMember(null);
-        fetchTeamMembers();
-      } else {
-        const error = await response.json();
-        throw new Error(error.error || 'Failed to save team member');
-      }
+      toast.success(editingMember ? 'Team member updated successfully' : 'Team member added successfully');
+      setShowForm(false);
+      setEditingMember(null);
+      fetchTeamMembers();
     } catch (error) {
       console.error('Error saving team member:', error);
       toast.error('Failed to save team member');
@@ -114,11 +101,21 @@ export default function TeamMembersPage() {
   if (showForm) {
     return (
       <SidebarLayout>
-        <div className="max-w-2xl mx-auto">
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">
-              {editingMember ? 'Edit Team Member' : 'Add Team Member'}
-            </h2>
+        <div className="max-w-3xl mx-auto">
+          <div className="bg-white rounded-xl border border-gray-100 shadow-lg p-8">
+            <div className="flex items-center space-x-4 mb-8">
+              <div className="p-3 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl">
+                <Users className="h-6 w-6 text-white" />
+              </div>
+              <div>
+              <h2 className="text-2xl font-bold text-black">
+                {editingMember ? 'Edit Team Member' : 'Add Team Member'}
+              </h2>
+              <p className="text-gray-600 mt-1">
+                {editingMember ? 'Update team member information' : 'Add a new team member to your organization'}
+              </p>
+              </div>
+            </div>
             <TeamMemberForm
               member={editingMember}
               onSubmit={handleFormSubmit}
@@ -135,54 +132,58 @@ export default function TeamMembersPage() {
       <div className="space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-3">
-            <Users className="h-8 w-8 text-blue-600" />
+          <div className="flex items-center space-x-4">
+            <div className="p-3 bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl shadow-lg">
+              <Users className="h-8 w-8 text-white" />
+            </div>
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">Team Members</h1>
-              <p className="text-gray-600">Manage your team members and their information</p>
+              <h1 className="text-3xl font-bold text-black">Team Members</h1>
+              <p className="text-gray-600 mt-1">Manage your team members and their information</p>
             </div>
           </div>
           <button
             onClick={handleAddMember}
-            className="flex items-center space-x-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+            className="flex items-center space-x-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-3 rounded-xl hover:from-blue-700 hover:to-purple-700 transition-all duration-200 shadow-lg hover:shadow-xl hover:-translate-y-0.5"
           >
             <Plus className="h-5 w-5" />
-            <span>Add Member</span>
+            <span className="font-medium">Add Member</span>
           </button>
         </div>
 
         {/* Stats */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="bg-white p-6 rounded-lg shadow-md">
+          <div className="bg-white p-6 rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow duration-200">
             <div className="flex items-center">
-              <Users className="h-8 w-8 text-blue-600" />
+              <div className="p-3 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl">
+                <Users className="h-6 w-6 text-white" />
+              </div>
               <div className="ml-4">
                 <p className="text-sm font-medium text-gray-600">Total Members</p>
-                <p className="text-2xl font-bold text-gray-900">{teamMembers.length}</p>
+                <p className="text-2xl font-bold text-black">{teamMembers.length}</p>
               </div>
             </div>
           </div>
-          <div className="bg-white p-6 rounded-lg shadow-md">
+          <div className="bg-white p-6 rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow duration-200">
             <div className="flex items-center">
-              <div className="h-8 w-8 bg-green-100 rounded-full flex items-center justify-center">
-                <span className="text-green-600 font-bold">CEO</span>
+              <div className="p-3 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-xl">
+                <span className="text-white font-bold text-sm">CEO</span>
               </div>
               <div className="ml-4">
                 <p className="text-sm font-medium text-gray-600">Leadership</p>
-                <p className="text-2xl font-bold text-gray-900">
+                <p className="text-2xl font-bold text-black">
                   {teamMembers.filter(m => m.role.toLowerCase().includes('ceo') || m.role.toLowerCase().includes('founder')).length}
                 </p>
               </div>
             </div>
           </div>
-          <div className="bg-white p-6 rounded-lg shadow-md">
+          <div className="bg-white p-6 rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow duration-200">
             <div className="flex items-center">
-              <div className="h-8 w-8 bg-purple-100 rounded-full flex items-center justify-center">
-                <span className="text-purple-600 font-bold">T</span>
+              <div className="p-3 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl">
+                <span className="text-white font-bold text-sm">T</span>
               </div>
               <div className="ml-4">
                 <p className="text-sm font-medium text-gray-600">Teachers</p>
-                <p className="text-2xl font-bold text-gray-900">
+                <p className="text-2xl font-bold text-black">
                   {teamMembers.filter(m => m.role.toLowerCase().includes('teacher')).length}
                 </p>
               </div>
@@ -194,30 +195,34 @@ export default function TeamMembersPage() {
         {loading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {[...Array(6)].map((_, i) => (
-              <div key={i} className="bg-white rounded-lg shadow-md overflow-hidden animate-pulse">
-                <div className="h-48 bg-gray-300"></div>
-                <div className="p-4 space-y-2">
-                  <div className="h-4 bg-gray-300 rounded"></div>
-                  <div className="h-3 bg-gray-300 rounded w-2/3"></div>
-                  <div className="h-3 bg-gray-300 rounded"></div>
+              <div key={i} className="bg-white rounded-xl border border-gray-100 overflow-hidden animate-pulse">
+                <div className="h-56 bg-gradient-to-br from-gray-200 to-gray-300"></div>
+                <div className="p-6 space-y-3">
+                  <div className="h-6 bg-gray-300 rounded w-3/4"></div>
+                  <div className="h-4 bg-gray-300 rounded w-1/2"></div>
+                  <div className="space-y-2">
+                    <div className="h-3 bg-gray-300 rounded"></div>
+                    <div className="h-3 bg-gray-300 rounded w-5/6"></div>
+                    <div className="h-3 bg-gray-300 rounded w-2/3"></div>
+                  </div>
                 </div>
               </div>
             ))}
           </div>
         ) : teamMembers.length === 0 ? (
-          <div className="text-center py-12">
-            <Users className="mx-auto h-12 w-12 text-gray-400" />
-            <h3 className="mt-2 text-sm font-medium text-gray-900">No team members</h3>
-            <p className="mt-1 text-sm text-gray-500">Get started by adding your first team member.</p>
-            <div className="mt-6">
-              <button
-                onClick={handleAddMember}
-                className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700"
-              >
-                <Plus className="h-4 w-4 mr-2" />
-                Add Team Member
-              </button>
+          <div className="text-center py-16">
+            <div className="mx-auto w-24 h-24 bg-gradient-to-br from-gray-100 to-gray-200 rounded-full flex items-center justify-center mb-6">
+              <Users className="h-12 w-12 text-gray-400" />
             </div>
+            <h3 className="text-xl font-semibold text-black mb-2">No team members yet</h3>
+            <p className="text-gray-600 mb-8 max-w-md mx-auto">Start building your team by adding your first team member. Showcase their expertise and build trust with your audience.</p>
+            <button
+              onClick={handleAddMember}
+              className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-medium rounded-xl hover:from-blue-700 hover:to-purple-700 transition-all duration-200 shadow-lg hover:shadow-xl hover:-translate-y-0.5"
+            >
+              <Plus className="h-5 w-5 mr-2" />
+              Add Your First Team Member
+            </button>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

@@ -14,6 +14,7 @@ interface StudyAbroadProgram {
   country: string;
   description: string;
   link: string;
+  image?: string;
   created_at: string;
   updated_at: string;
 }
@@ -162,7 +163,8 @@ export default function StudyAbroadPage() {
       description: description || 'Study opportunities available',
       universities: universities || 'Contact us for more information',
       image: imageInfo.image,
-      dotbg: imageInfo.dotbg
+      dotbg: imageInfo.dotbg,
+      uploadedImage: program.image
     };
   });
 
@@ -187,54 +189,58 @@ export default function StudyAbroadPage() {
       <div className="space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-3">
-            <Globe className="h-8 w-8 text-purple-600" />
+          <div className="flex items-center space-x-4">
+            <div className="p-3 bg-gradient-to-br from-purple-500 to-indigo-600 rounded-xl shadow-lg">
+              <Globe className="h-8 w-8 text-white" />
+            </div>
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">Study Abroad Programs</h1>
-              <p className="text-gray-600">Manage your study abroad destinations and programs</p>
+              <h1 className="text-3xl font-bold text-black">Study Abroad Programs</h1>
+              <p className="text-gray-600 mt-1">Manage your study abroad destinations and programs</p>
             </div>
           </div>
           <button
             onClick={handleAddProgram}
-            className="flex items-center space-x-2 bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition-colors"
+            className="flex items-center space-x-2 bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-6 py-3 rounded-xl hover:from-purple-700 hover:to-indigo-700 transition-all duration-200 shadow-lg hover:shadow-xl hover:-translate-y-0.5"
           >
             <Plus className="h-5 w-5" />
-            <span>Add Program</span>
+            <span className="font-medium">Add Program</span>
           </button>
         </div>
 
         {/* Stats */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="bg-white p-6 rounded-lg shadow-md">
+          <div className="bg-white p-6 rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow duration-200">
             <div className="flex items-center">
-              <Globe className="h-8 w-8 text-purple-600" />
+              <div className="p-3 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl">
+                <Globe className="h-6 w-6 text-white" />
+              </div>
               <div className="ml-4">
                 <p className="text-sm font-medium text-gray-600">Total Programs</p>
-                <p className="text-2xl font-bold text-gray-900">{programs.length}</p>
+                <p className="text-2xl font-bold text-black">{programs.length}</p>
               </div>
             </div>
           </div>
-          <div className="bg-white p-6 rounded-lg shadow-md">
+          <div className="bg-white p-6 rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow duration-200">
             <div className="flex items-center">
-              <div className="h-8 w-8 bg-blue-100 rounded-full flex items-center justify-center">
-                <span className="text-blue-600 font-bold">A</span>
+              <div className="p-3 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl">
+                <span className="text-white font-bold text-sm">A</span>
               </div>
               <div className="ml-4">
                 <p className="text-sm font-medium text-gray-600">Countries</p>
-                <p className="text-2xl font-bold text-gray-900">
+                <p className="text-2xl font-bold text-black">
                   {new Set(programs.map(p => p.country)).size}
                 </p>
               </div>
             </div>
           </div>
-          <div className="bg-white p-6 rounded-lg shadow-md">
+          <div className="bg-white p-6 rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow duration-200">
             <div className="flex items-center">
-              <div className="h-8 w-8 bg-green-100 rounded-full flex items-center justify-center">
-                <span className="text-green-600 font-bold">✓</span>
+              <div className="p-3 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-xl">
+                <span className="text-white font-bold text-sm">✓</span>
               </div>
               <div className="ml-4">
                 <p className="text-sm font-medium text-gray-600">Active Programs</p>
-                <p className="text-2xl font-bold text-gray-900">{programs.length}</p>
+                <p className="text-2xl font-bold text-black">{programs.length}</p>
               </div>
             </div>
           </div>
@@ -244,25 +250,25 @@ export default function StudyAbroadPage() {
         {loading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {[...Array(6)].map((_, i) => (
-              <div key={i} className="bg-white rounded-lg shadow-md overflow-hidden animate-pulse">
-                <div className="h-[516px] bg-gray-300"></div>
+              <div key={i} className="bg-white rounded-xl border border-gray-100 overflow-hidden animate-pulse">
+                <div className="h-[516px] bg-gradient-to-br from-gray-200 to-gray-300"></div>
               </div>
             ))}
           </div>
         ) : programs.length === 0 ? (
-          <div className="text-center py-12">
-            <Globe className="mx-auto h-12 w-12 text-gray-400" />
-            <h3 className="mt-2 text-sm font-medium text-gray-900">No study abroad programs</h3>
-            <p className="mt-1 text-sm text-gray-500">Get started by adding your first study abroad program.</p>
-            <div className="mt-6">
-              <button
-                onClick={handleAddProgram}
-                className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-purple-600 hover:bg-purple-700"
-              >
-                <Plus className="h-4 w-4 mr-2" />
-                Add Program
-              </button>
+          <div className="text-center py-16">
+            <div className="mx-auto w-24 h-24 bg-gradient-to-br from-gray-100 to-gray-200 rounded-full flex items-center justify-center mb-6">
+              <Globe className="h-12 w-12 text-gray-400" />
             </div>
+            <h3 className="text-xl font-semibold text-black mb-2">No study abroad programs yet</h3>
+            <p className="text-gray-600 mb-8 max-w-md mx-auto">Start building your study abroad portfolio by adding your first program. Showcase international opportunities to students.</p>
+            <button
+              onClick={handleAddProgram}
+              className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-medium rounded-xl hover:from-purple-700 hover:to-indigo-700 transition-all duration-200 shadow-lg hover:shadow-xl hover:-translate-y-0.5"
+            >
+              <Plus className="h-5 w-5 mr-2" />
+              Add Your First Program
+            </button>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">

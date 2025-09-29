@@ -38,6 +38,7 @@ export async function GET() {
 export async function POST(request) {
   try {
     const body = await request.json();
+    console.log('Course creation request body:', body);
     
     const { data: course, error } = await supabase
       .from('courses')
@@ -46,6 +47,7 @@ export async function POST(request) {
       .single();
 
     if (error) {
+      console.error('Supabase error:', error);
       if (error.code === '23505') {
         return NextResponse.json(
           { success: false, message: 'Course with this information already exists' },
@@ -55,12 +57,14 @@ export async function POST(request) {
       throw error;
     }
 
+    console.log('Course created successfully:', course);
     return NextResponse.json({
       success: true,
       message: 'Course created successfully',
       data: course
     }, { status: 201 });
   } catch (error) {
+    console.error('Course creation error:', error);
     return NextResponse.json(
       { success: false, message: 'Error creating course', error: error.message },
       { status: 500 }
