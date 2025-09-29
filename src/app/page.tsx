@@ -386,7 +386,7 @@ export default function Home() {
             transition={{ duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }}
           >
             <motion.h1 
-              className='text-[28px] text-center md:text-left md:text-[44px] lg:text-[66px] w-full text-nowrap text-[#616161] md:leading-[48px] tracking-normal'
+              className='text-[27px] text-center md:text-left md:text-[44px] lg:text-[66px] w-full text-nowrap text-[#797979] md:leading-[48px] tracking-normal'
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4, delay: 0.1, ease: [0.25, 0.46, 0.45, 0.94] }}
@@ -394,7 +394,7 @@ export default function Home() {
               YOUR GATEWAY 
             </motion.h1>
             <motion.h1 
-              className='text-[40px] text-center md:text-left md:text-[64px] lg:text-[92px] md:leading-[68px] text-[#414040] tracking-wide'
+              className='text-[40px] text-center md:text-left md:text-[64px] lg:text-[92px] md:leading-[68px] text-[#565656] tracking-wide'
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4, delay: 0.2, ease: [0.25, 0.46, 0.45, 0.94] }}
@@ -598,7 +598,7 @@ export default function Home() {
                   viewport={{ once: true, amount: 0.3 }}
                   transition={{ duration: 0.6, delay: 0.6, ease: "easeOut" }}
                 >
-                  <p className='w-fit text-white font-montserrat font-bold text-center text-[14px] md:text-[22px]'>Neon Edu - Your Gateway to global education</p>
+                  <p className='w-fit text-white font-montserrat font-bold text-center text-[14px] md:text-[22px]'>Neon Edu - Your gateway to global education</p>
                 </motion.div>
                 {/* interactive dots */}
                 <motion.div 
@@ -668,7 +668,7 @@ export default function Home() {
             >
               <div className='border-b-2 border-[#BBBBBB] w-full flex justify-center pb-4'>
                 <p className='text-[#333333] text-[24px] font-clash font-medium leading-[24px] tracking-normal text-center'> 
-                  Our Offers 
+                  Our Services
                 </p>
               </div>
             </motion.div>
@@ -689,7 +689,7 @@ export default function Home() {
                 transition={{ duration: 0.6, delay: 0.6, ease: "easeOut" }}
               >
                 <p className='text-[#333333] text-[32px] font-clash font-medium leading-[24px] tracking-normal'> 
-                  Our Offers
+                  Our Services
                 </p>
               </motion.div>
               <div className='hidden md:block w-[2px] md:h-[600px] lg:h-[40vh] bg-[#BBBBBB]'>.</div>
@@ -720,7 +720,7 @@ export default function Home() {
                     <p className='text-[18px] text-[#ff872f] font-medium my-4'>*</p> 
                     <div className='flex flex-col md:flex-row font-montserrat text-[14px] text-[#2c2c2c] gap-2 md:gap-3 font-medium'>
                       <p>General English</p>
-                      <p>IELTS prepatation</p>
+                      <p>IELTS preparation</p>
                       <p>Academic English</p>
                     </div>
                     <button onClick={() => scrollToSection('courses')} className='flex items-center justify-center gap-2 text-[#2c2c2c] text-[14px] font-montserrat font-medium leading-[24px] tracking-normal mt-[38px] hover:text-[#FF872F] transition-colors cursor-pointer'>
@@ -831,11 +831,11 @@ export default function Home() {
                     transition={{ duration: 0.6, delay: 0.8, ease: "easeOut" }}
                   >
                     <p className='text-[22px] text-[#ff872f] font-medium -mb-4'>*</p> 
-                    <p className='text-[22px] md:text-[22px] text-left pl-2'>Helping students improve <br className='hidden md:block' /> their English and Academic <br className='hidden md:block' /> English skills</p>
+                    <p className='text-[22px] md:text-[22px] text-left pl-2'>Helping students improve their English and Academic English skills</p>
                     
                   </motion.div>
                   <motion.div 
-                    className='w-full md:w-[50%] h-full flex flex-col items-start justify-start text-center mt-6'
+                    className='w-full md:w-[50%] h-full flex flex-col items-start justify-start text-center'
                     initial={{ opacity: 0, y: 30 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true, amount: 0.3 }}
@@ -843,7 +843,7 @@ export default function Home() {
                   >
                    
                     <p className='text-[22px] text-[#ff872f] font-medium -mb-4'>*</p> 
-                    <p className='text-[22px] md:text-[22px] text-left pl-2 '>Guiding them step by <br className='hidden md:block' /> step toward studying at <br className='hidden md:block' /> top universities abroad</p>
+                    <p className='text-[22px] md:text-[22px] text-left pl-2 '>Guiding them step by step toward studying at top universities abroad</p>
                   </motion.div>
                   
               </motion.div>
@@ -873,7 +873,7 @@ export default function Home() {
                   viewport={{ once: true, amount: 0.3 }}
                   transition={{ duration: 0.6, delay: 0.8, ease: "easeOut" }}
                 >
-                  We are always open to establishing strategic partnerships with <br className='hidden md:block' /> leading educational institutions and professional, ethical agencies <br className='hidden md:block' /> worldwide.
+                  We are always open to establishing strategic partnerships with leading educational institutions and professional, ethical agencies worldwide.
                 </motion.h1>
               </div>
               <motion.div
