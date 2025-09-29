@@ -20,30 +20,27 @@
     --foreground: #ededed;
   }
   
-  /* Override dark mode for admin pages */
+  /* Override dark mode for admin pages - exclude preview cards */
   .admin-page {
     --background: #ffffff !important;
     --foreground: #171717 !important;
   }
   
-  .admin-page {
+  /* Override text colors but exclude grid containers (preview cards) */
+  .admin-page h1:not(.grid *),
+  .admin-page h2:not(.grid *),
+  .admin-page h3:not(.grid *),
+  .admin-page h4:not(.grid *),
+  .admin-page h5:not(.grid *),
+  .admin-page h6:not(.grid *),
+  .admin-page p:not(.grid *),
+  .admin-page span:not(.grid *),
+  .admin-page div:not(.grid *),
+  .admin-page button:not(.grid *),
+  .admin-page input:not(.grid *),
+  .admin-page textarea:not(.grid *),
+  .admin-page label:not(.grid *) {
     color: #171717 !important;
-  }
-  
-  .admin-page h1,
-  .admin-page h2,
-  .admin-page h3,
-  .admin-page h4,
-  .admin-page h5,
-  .admin-page h6,
-  .admin-page p,
-  .admin-page span,
-  .admin-page div,
-  .admin-page button,
-  .admin-page input,
-  .admin-page textarea,
-  .admin-page label {
-    color: inherit !important;
   }
 }
 
