@@ -90,11 +90,11 @@ export default function CoursesPage() {
     );
   }
 
-  if (editingCourse) {
+  if (editingCourse && editingCourse.id) {
     return (
       <CourseForm
         course={editingCourse}
-        onSubmit={(data) => handleUpdate(editingCourse.id, data)}
+        onSubmit={(data) => handleUpdate(editingCourse.id!, data)}
         onCancel={() => setEditingCourse(null)}
       />
     );
