@@ -20,6 +20,12 @@ const nextConfig: NextConfig = {
   typescript: {
     ignoreBuildErrors: false,
   },
+  // Ensure fonts are properly optimized
+  optimizeFonts: true,
+  // Enable static font optimization
+  compiler: {
+    removeConsole: process.env.NODE_ENV === 'production',
+  },
 };
 
 export default nextConfig;

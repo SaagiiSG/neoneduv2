@@ -88,6 +88,11 @@ export default function RootLayout({
         <link rel="dns-prefetch" href="//fonts.googleapis.com" />
         <link rel="dns-prefetch" href="//fonts.gstatic.com" />
         
+        {/* Preload custom fonts */}
+        <link rel="preload" href="/_next/static/media/ClashDisplay-Regular.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
+        <link rel="preload" href="/_next/static/media/ClashDisplay-Bold.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
+        <link rel="preload" href="/_next/static/media/ClashDisplay-Medium.woff2" as="font" type="font/woff2" crossOrigin="anonymous" />
+        
         {/* Additional SEO and Performance Optimizations */}
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta name="theme-color" content="#FF872F" />

@@ -5,6 +5,15 @@
   --foreground: #171717;
 }
 
+/* Font class definitions */
+.font-clash {
+  font-family: var(--font-clash-display), system-ui, arial, sans-serif;
+}
+
+.font-montserrat {
+  font-family: var(--font-montserrat), system-ui, arial, sans-serif;
+}
+
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #1a1a1a;

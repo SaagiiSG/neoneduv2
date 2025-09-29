@@ -36,11 +36,15 @@ export const clashDisplay = localFont({
   ],
   variable: '--font-clash-display',
   display: 'swap',
+  preload: true,
+  fallback: ['system-ui', 'arial'],
 })
 
 export const montserrat = Montserrat({
   subsets: ['latin'],
   variable: '--font-montserrat',
   display: 'swap',
+  preload: true,
+  fallback: ['system-ui', 'arial'],
   weight: ['100', '200', '300', '400', '500', '600', '700', '800', '900'],
 })
