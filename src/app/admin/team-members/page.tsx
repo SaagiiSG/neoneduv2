@@ -153,7 +153,7 @@ export default function TeamMembersPage() {
               <Users className="h-8 w-8 text-white" />
             </div>
             <div>
-              <h1 className="text-3xl font-bold text-white">Team Members</h1>
+              <h1 className="text-3xl font-bold text-black">Team Members</h1>
               <p className="text-gray-600 mt-1">Manage your team members and their information</p>
             </div>
           </div>
@@ -162,7 +162,7 @@ export default function TeamMembersPage() {
             className="flex items-center space-x-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-3 rounded-xl hover:from-blue-700 hover:to-purple-700 transition-all duration-200 shadow-lg hover:shadow-xl hover:-translate-y-0.5"
           >
             <Plus className="h-5 w-5" />
-            <span className="font-medium">Add Member</span>
+            <span className="font-medium text-white">Add Member</span>
           </button>
         </div>
 
