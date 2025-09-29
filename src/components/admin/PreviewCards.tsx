@@ -4,7 +4,7 @@ import React from 'react';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { Edit, Trash2 } from 'lucide-react';
-import { TeamMember, Course, StudyAbroadProgram } from '../lib/types';
+import { TeamMember, Course, StudyAbroadProgram } from '@/lib/types';
 
 // Team Member Preview Card
 export function TeamMemberCard({ member, onEdit, onDelete }: {
