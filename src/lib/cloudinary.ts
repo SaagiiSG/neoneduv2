@@ -1,4 +1,5 @@
 import { v2 as cloudinary } from 'cloudinary';
+import { CloudinaryUploadResult } from './types';
 
 // Configure Cloudinary
 cloudinary.config({
@@ -37,7 +38,7 @@ export async function uploadImage(file: File, folder: string = 'neonedu'): Promi
       new Promise((_, reject) => 
         setTimeout(() => reject(new Error('Upload timeout after 60 seconds')), 60000)
       )
-    ]) as any;
+    ]) as CloudinaryUploadResult;
 
     console.log('Image uploaded successfully:', result.secure_url);
     return result.secure_url;

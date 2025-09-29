@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { TeamMember, Course, StudyAbroadProgram } from './types';
 
 const API_BASE_URL = '/api';
 
@@ -38,8 +39,8 @@ api.interceptors.response.use(
 export const teamMembersAPI = {
   getAll: () => api.get('/team-members'),
   getById: (id: string) => api.get(`/team-members/${id}`),
-  create: (data: any) => api.post('/team-members', data),
-  update: (id: string, data: any) => api.put(`/team-members/${id}`, data),
+  create: (data: TeamMember) => api.post('/team-members', data),
+  update: (id: string, data: TeamMember) => api.put(`/team-members/${id}`, data),
   delete: (id: string) => api.delete(`/team-members/${id}`),
 };
 
@@ -47,8 +48,8 @@ export const teamMembersAPI = {
 export const coursesAPI = {
   getAll: () => api.get('/courses'),
   getById: (id: string) => api.get(`/courses/${id}`),
-  create: (data: any) => api.post('/courses', data),
-  update: (id: string, data: any) => api.put(`/courses/${id}`, data),
+  create: (data: Course) => api.post('/courses', data),
+  update: (id: string, data: Course) => api.put(`/courses/${id}`, data),
   delete: (id: string) => api.delete(`/courses/${id}`),
 };
 
@@ -56,8 +57,8 @@ export const coursesAPI = {
 export const studyAbroadAPI = {
   getAll: () => api.get('/study-abroad'),
   getById: (id: string) => api.get(`/study-abroad/${id}`),
-  create: (data: any) => api.post('/study-abroad', data),
-  update: (id: string, data: any) => api.put(`/study-abroad/${id}`, data),
+  create: (data: StudyAbroadProgram) => api.post('/study-abroad', data),
+  update: (id: string, data: StudyAbroadProgram) => api.put(`/study-abroad/${id}`, data),
   delete: (id: string) => api.delete(`/study-abroad/${id}`),
 };
 

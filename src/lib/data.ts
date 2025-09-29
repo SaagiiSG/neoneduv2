@@ -1,4 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
+import { TeamMember, Course, StudyAbroadProgram, HistoryItem } from './types';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
@@ -86,7 +87,7 @@ export async function getHistoryData() {
 }
 
 // Transform database data to match your original format
-export function transformTeamData(dbData: any[]) {
+export function transformTeamData(dbData: TeamMember[]) {
   // Define the specific order for team members (using exact names from database)
   const teamOrder = [
     'Dalantai.E',
@@ -125,7 +126,7 @@ export function transformTeamData(dbData: any[]) {
     });
 }
 
-export function transformCourseData(dbData: any[]) {
+export function transformCourseData(dbData: Course[]) {
   // Define the specific order for courses
   const courseOrder = [
     'General English',
@@ -166,8 +167,8 @@ export function transformCourseData(dbData: any[]) {
     });
 }
 
-export function transformStudyAbroadData(dbData: any[]) {
-  return dbData.map(program => {
+export function transformStudyAbroadData(dbData: StudyAbroadProgram[]) {
+  return dbData.map((program) => {
     // Map country names to correct image paths
     const countryImageMap: {[key: string]: {image: string, dotbg: string}} = {
       'Australia': {

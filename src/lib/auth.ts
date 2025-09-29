@@ -1,5 +1,6 @@
 import { createMiddlewareClient } from '@supabase/auth-helpers-nextjs';
 import { NextRequest, NextResponse } from 'next/server';
+import { AuthContext } from './types';
 
 export async function authenticateRequest(request: NextRequest) {
   try {
@@ -55,7 +56,7 @@ export async function authenticateRequest(request: NextRequest) {
 }
 
 export function createAuthenticatedHandler(
-  handler: (request: NextRequest, context: { session: any; user: any }) => Promise<NextResponse>
+  handler: (request: NextRequest, context: AuthContext) => Promise<NextResponse>
 ) {
   return async (request: NextRequest) => {
     const authResult = await authenticateRequest(request);
