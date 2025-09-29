@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { authenticateRequest } from '@/lib/auth';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -12,6 +13,14 @@ const supabase = createClient(supabaseUrl, supabaseServiceKey, {
 });
 
 export async function GET(request, { params }) {
+  // Authenticate the request
+  const authResult = await authenticateRequest(request);
+  if (authResult.error) {
+    return NextResponse.json(
+      { success: false, error: authResult.error },
+      { status: authResult.status }
+    );
+  }
   try {
     const { data: teamMember, error } = await supabase
       .from('team_members')
@@ -42,6 +51,15 @@ export async function GET(request, { params }) {
 }
 
 export async function PUT(request, { params }) {
+  // Authenticate the request
+  const authResult = await authenticateRequest(request);
+  if (authResult.error) {
+    return NextResponse.json(
+      { success: false, error: authResult.error },
+      { status: authResult.status }
+    );
+  }
+
   try {
     const body = await request.json();
     
@@ -76,6 +94,15 @@ export async function PUT(request, { params }) {
 }
 
 export async function DELETE(request, { params }) {
+  // Authenticate the request
+  const authResult = await authenticateRequest(request);
+  if (authResult.error) {
+    return NextResponse.json(
+      { success: false, error: authResult.error },
+      { status: authResult.status }
+    );
+  }
+
   try {
     const { data: teamMember, error } = await supabase
       .from('team_members')

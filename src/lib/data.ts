@@ -100,14 +100,62 @@ export function transformTeamData(dbData: TeamMember[]) {
   ];
 
   return dbData
-    .map(member => ({
-      name: member.name,
-      image: member.image,
-      position: member.role,
-      ditem1: member.bio,
-      ditem2: '',
-      ditem3: ''
-    }))
+    .map(member => {
+      // Parse the bio field to extract up to 3 items
+      let ditem1 = '', ditem2 = '', ditem3 = '';
+      
+      if (member.bio) {
+        const bioText = member.bio.trim();
+        
+        // Manual parsing for specific patterns found in the data
+        let items: string[] = [];
+        
+        // Handle specific cases based on the actual data patterns
+        if (bioText.includes('PhD in Educational Leadership (2020), Monash University, Australia iMBA in International Business (2014), National Taiwan University of Science and Technology, Taiwan MA (2009) and BS (2008), University of the Humanities, Mongolia')) {
+          // Anar.P's specific case
+          items = [
+            'PhD in Educational Leadership (2020), Monash University, Australia',
+            'iMBA in International Business (2014), National Taiwan University of Science and Technology, Taiwan',
+            'MA (2009) and BS (2008), University of the Humanities, Mongolia'
+          ];
+        } else if (bioText.includes('iMBA in International Business (2014), National Taiwan University of Science and Technology, Taiwan MS (2006) and BS (2005), Mongolian National University of Education, Mongolia')) {
+          // Dalantai.E's specific case
+          items = [
+            'iMBA in International Business (2014), National Taiwan University of Science and Technology, Taiwan',
+            'MS (2006) and BS (2005), Mongolian National University of Education, Mongolia'
+          ];
+        } else if (bioText.includes('MS in Environmental Biology (2021), Swansea University, UK BS (2017), University of the Humanities, Mongolia')) {
+          // Kherlen. Sh's specific case
+          items = [
+            'MS in Environmental Biology (2021), Swansea University, UK',
+            'BS (2017), University of the Humanities, Mongolia'
+          ];
+        } else {
+          // Generic fallback: split by double spaces or try to identify degree patterns
+          items = bioText.split(/\s{2,}/).map(item => item.trim()).filter(item => item.length > 0);
+        }
+        
+        // If we didn't find the pattern, try splitting by double spaces
+        if (items.length <= 1) {
+          items = bioText.split(/\s{2,}/).map(item => item.trim()).filter(item => item.length > 0);
+        }
+        
+        // Assign up to 3 items
+        ditem1 = items[0] || '';
+        ditem2 = items[1] || '';
+        ditem3 = items[2] || '';
+      }
+
+      return {
+        name: member.name,
+        image: member.image,
+        position: member.role,
+        ditem1,
+        ditem2,
+        ditem3,
+        bio: member.bio || ''
+      };
+    })
     .sort((a, b) => {
       const indexA = teamOrder.indexOf(a.name);
       const indexB = teamOrder.indexOf(b.name);

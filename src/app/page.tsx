@@ -451,7 +451,7 @@ export default function Home() {
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ duration: 0.3, delay: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }}
                 > 
-                  <MapPin className='w-4 h-4 inline-flex' /> Mongolia,UB
+                  <MapPin className='w-4 h-4 inline-flex' /> Mongolia, UB
                 </motion.span>
                 <motion.span 
                   className='hidden md:flex items-center gap-2 text-[#f3f3f3] text-[14px] font-montserrat font-medium leading-[24px] tracking-normal bg-[#373737]/45 px-3 py-1 rounded-full mt-[12px]'
@@ -495,7 +495,7 @@ export default function Home() {
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ duration: 0.3, delay: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }}
                 > 
-                  <MapPin className='w-4 h-4 inline-flex' /> Mongolia,UB
+                  <MapPin className='w-4 h-4 inline-flex' /> Mongolia, UB
                 </motion.span>
                 <motion.span 
                   className='flex items-center gap-1 text-[#333333] text-[12px] font-montserrat font-medium leading-[24px] tracking-normal bg-[#373737]/0 px-2 py-0.5 rounded-full mt-[12px]'
@@ -668,7 +668,7 @@ export default function Home() {
             >
               <div className='border-b-2 border-[#BBBBBB] w-full flex justify-center pb-4'>
                 <p className='text-[#333333] text-[24px] font-clash font-medium leading-[24px] tracking-normal text-center'> 
-                  Services We Offer 
+                  Our Offers 
                 </p>
               </div>
             </motion.div>
@@ -689,7 +689,7 @@ export default function Home() {
                 transition={{ duration: 0.6, delay: 0.6, ease: "easeOut" }}
               >
                 <p className='text-[#333333] text-[32px] font-clash font-medium leading-[24px] tracking-normal'> 
-                  Services <br/> We Offer 
+                  Our Offers
                 </p>
               </motion.div>
               <div className='hidden md:block w-[2px] md:h-[600px] lg:h-[40vh] bg-[#BBBBBB]'>.</div>
@@ -911,7 +911,7 @@ export default function Home() {
               viewport={{ once: true, amount: 0.3 }}
               transition={{ duration: 0.6, delay: 0.4, ease: "easeOut" }}
             > 
-              Our history
+              Our History
             </motion.div> 
             <motion.div 
               className='block lg:hidden w-full font-clash text-[#333333]  font-medium text-[24px] md:text-[32px] text-center border-b-2 border-[#bbbbbb]'
@@ -1166,7 +1166,7 @@ export default function Home() {
                       <div className='flex flex-col items-start justify-start gap-4 sm:gap-5 lg:gap-7 mt-4 sm:mt-5 lg:mt-7'>
                         <div className='flex items-start sm:items-center justify-start gap-2 text-[14px] sm:text-[16px]'> 
                           <Phone className='w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0 mt-0.5 sm:mt-0' /> 
-                          <p className='break-words'>Phone number; (+976) 9906-7781 (+976) 9906-5562</p>
+                          <p className='break-words'>Phone numbers: (+976) 9906-7781, (+976) 9906-5562</p>
                         </div>
                         <div className='flex flex-col sm:flex-row items-start sm:items-center justify-start gap-2 text-[14px] sm:text-[16px]'> 
                           <Mail className='w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0 mt-0.5 sm:mt-0' /> 

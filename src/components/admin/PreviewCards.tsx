@@ -63,9 +63,31 @@ export function TeamMemberCard({ member, onEdit, onDelete }: {
             </div>
           </div>
           
-          <p className="text-gray-600 text-sm leading-relaxed line-clamp-3">
-            {member.bio}
-          </p>
+          <div className="space-y-2">
+            {member.ditem1 && (
+              <p className="text-gray-600 text-sm leading-relaxed">
+                • {member.ditem1}
+              </p>
+            )}
+            {member.ditem2 && (
+              <p className="text-gray-600 text-sm leading-relaxed">
+                • {member.ditem2}
+              </p>
+            )}
+            {member.ditem3 && (
+              <p className="text-gray-600 text-sm leading-relaxed">
+                • {member.ditem3}
+              </p>
+            )}
+            {member.bio && (
+              <p className="text-gray-500 text-xs leading-relaxed italic mt-2">
+                {member.bio}
+              </p>
+            )}
+            {!member.ditem1 && !member.ditem2 && !member.ditem3 && !member.bio && (
+              <p className="text-gray-400 text-sm italic">No description available</p>
+            )}
+          </div>
         </div>
         
         {/* Bottom Border Accent */}
