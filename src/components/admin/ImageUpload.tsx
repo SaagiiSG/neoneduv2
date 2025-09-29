@@ -21,9 +21,8 @@ export default function ImageUpload({
   const [preview, setPreview] = useState<string | null>(currentImage || null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleFileSelect = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
+  const handleFileSelect = async (file: File | null, event?: React.ChangeEvent<HTMLInputElement>) => {
+        if (!file) return;
 
     // Validate file type
     if (!file.type.startsWith('image/')) {
@@ -81,16 +80,13 @@ export default function ImageUpload({
   };
 
   const handleDrop = (e: React.DragEvent) => {
-    e.preventDefault();
-    const files = e.dataTransfer.files;
-    if (files.length > 0) {
-      const file = files[0];
-      const event = {
-        target: { files: [file] }
-      } as React.ChangeEvent<HTMLInputElement>;
-      handleFileSelect(event);
-    }
-  };
+        e.preventDefault();
+        const files = e.dataTransfer.files;
+        if (files.length > 0) {
+          const file = files[0];
+          handleFileSelect(file);
+        }
+      };
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
@@ -126,7 +122,7 @@ export default function ImageUpload({
             ref={fileInputRef}
             type="file"
             accept="image/*"
-            onChange={handleFileSelect}
+            onChange={(e) => handleFileSelect(e.target.files?.[0])}
             className="hidden"
           />
           <button
@@ -149,7 +145,7 @@ export default function ImageUpload({
             ref={fileInputRef}
             type="file"
             accept="image/*"
-            onChange={handleFileSelect}
+            onChange={(e) => handleFileSelect(e.target.files?.[0])}
             className="hidden"
           />
           
