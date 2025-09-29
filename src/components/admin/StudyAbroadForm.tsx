@@ -131,7 +131,7 @@ export default function StudyAbroadForm({ program, onSubmit, onCancel }: StudyAb
         country: formData.country,
         description: combinedDescription,
         universities: formData.universities,
-        image: formData.image || null,
+        image: formData.image || '',
         link: 'https://neonedu.com' // Default link since database requires it
       };
       

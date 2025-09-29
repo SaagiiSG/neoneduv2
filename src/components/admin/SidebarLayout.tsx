@@ -19,7 +19,8 @@ import {
 import { createClient } from '@supabase/supabase-js';
 import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
-import { User as UserType } from '../lib/types';
+import { User as UserType } from '@/lib/types';
+import type { User as SupabaseUser } from '@supabase/supabase-js';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
@@ -66,7 +67,7 @@ const navigationItems = [
 export default function SidebarLayout({ children }: SidebarLayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
-  const [user, setUser] = useState<UserType | null>(null);
+  const [user, setUser] = useState<SupabaseUser | null>(null);
   const [, setSessionExpired] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
@@ -94,7 +95,7 @@ export default function SidebarLayout({ children }: SidebarLayoutProps) {
   }, [router]);
 
   // Session timeout effect
-  const handleLogout = React.useCallback(async (isSessionExpired = false) => {
+  const handleLogout = React.useCallback(async (isSessionExpired: boolean = false) => {
     try {
       await supabase.auth.signOut();
       localStorage.removeItem('supabase.auth.token');
@@ -215,7 +216,7 @@ export default function SidebarLayout({ children }: SidebarLayoutProps) {
               <span className="text-sm text-gray-600">{user?.email}</span>
             </div>
             <button
-              onClick={handleLogout}
+              onClick={() => handleLogout()}
               className="flex w-full items-center px-3 py-2 text-sm font-medium text-red-600 hover:bg-red-50 rounded-lg transition-colors"
             >
               <LogOut className="mr-3 h-5 w-5" />
@@ -303,7 +304,7 @@ export default function SidebarLayout({ children }: SidebarLayoutProps) {
               </motion.span>
             </div>
             <motion.button
-              onClick={handleLogout}
+              onClick={() => handleLogout()}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               className={`flex ${collapsed ? 'justify-center' : ''} w-full items-center px-3 py-2 text-sm font-medium text-red-600 hover:bg-red-50 rounded-lg transition-all duration-200`}
