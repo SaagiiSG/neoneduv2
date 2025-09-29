@@ -136,7 +136,8 @@ export function transformCourseData(dbData: Course[]) {
 
   return dbData
     .map(course => ({
-      name: course.title,
+      title: course.title,
+      description: course.description,
       duration: course.duration || (course.description?.includes('months') ? 
         course.description.match(/\d+ months/)?.[0] || '4 months' : '4 months'),
       image: course.image || (course.title === 'General English' ? '/classroom2.svg' :
@@ -146,17 +147,20 @@ export function transformCourseData(dbData: Course[]) {
              course.category === 'IELTS Preparation' ? '/classroom1.png' :
              course.category === 'Academic English' ? '/office.svg' :
              '/office.svg'),
-      levelItem1: course.levelitem1 || (course.description?.includes('Beginner') ? 'Beginner' :
+      levelitem1: course.levelitem1 || (course.description?.includes('Beginner') ? 'Beginner' :
                   course.description?.includes('Upper Intermediate') ? 'Upper Intermediate' :
                   'Research methodology'),
-      levelItem2: course.levelitem2 || (course.description?.includes('Intermediate') ? 'Intermediate' :
+      levelitem2: course.levelitem2 || (course.description?.includes('Intermediate') ? 'Intermediate' :
                   course.description?.includes('Advanced') ? 'Advanced' :
-                  'Academic writing')
+                  'Academic writing'),
+      category: course.category,
+      link: course.link,
+      order: course.order
     }))
     .sort((a, b) => {
       // Sort by category first
-      const categoryA = courseOrder.indexOf(a.name) !== -1 ? courseOrder.indexOf(a.name) : 999;
-      const categoryB = courseOrder.indexOf(b.name) !== -1 ? courseOrder.indexOf(b.name) : 999;
+      const categoryA = courseOrder.indexOf(a.title) !== -1 ? courseOrder.indexOf(a.title) : 999;
+      const categoryB = courseOrder.indexOf(b.title) !== -1 ? courseOrder.indexOf(b.title) : 999;
       
       if (categoryA !== categoryB) {
         return categoryA - categoryB;
