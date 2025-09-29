@@ -20,7 +20,7 @@ import {
   transformStudyAbroadData
 } from '@/lib/data'
 import { TeamMember, Course, StudyAbroadProgram, HistoryItem } from '@/lib/types';
-import { sendContactEmail } from '@/lib/emailServiceFallback'
+import { sendContactEmail } from '@/lib/emailServiceEmailJS'
 import { SupabaseProvider } from '@/contexts/SupabaseContext'
 
 
