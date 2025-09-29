@@ -19,6 +19,32 @@
     --background: #1a1a1a;
     --foreground: #ededed;
   }
+  
+  /* Override dark mode for admin pages */
+  .admin-page {
+    --background: #ffffff !important;
+    --foreground: #171717 !important;
+  }
+  
+  .admin-page {
+    color: #171717 !important;
+  }
+  
+  .admin-page h1,
+  .admin-page h2,
+  .admin-page h3,
+  .admin-page h4,
+  .admin-page h5,
+  .admin-page h6,
+  .admin-page p,
+  .admin-page span,
+  .admin-page div,
+  .admin-page button,
+  .admin-page input,
+  .admin-page textarea,
+  .admin-page label {
+    color: inherit !important;
+  }
 }
 
 body {

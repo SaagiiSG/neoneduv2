@@ -160,7 +160,7 @@ export default function SidebarLayout({ children }: SidebarLayoutProps) {
 
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 admin-page">
       {/* Mobile sidebar */}
       <motion.div 
         className="fixed inset-0 z-50 lg:hidden"
