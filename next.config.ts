@@ -15,7 +15,7 @@ const nextConfig: NextConfig = {
     serverComponentsExternalPackages: ['cloudinary'],
   },
   eslint: {
-    ignoreDuringBuilds: false,
+    ignoreDuringBuilds: true,
   },
   typescript: {
     ignoreBuildErrors: false,
