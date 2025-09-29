@@ -1,23 +1,14 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
 import { Plus, Users } from 'lucide-react';
 import toast from 'react-hot-toast';
 import SidebarLayout from '@/components/admin/SidebarLayout';
 import { TeamMemberCard } from '@/components/admin/PreviewCards';
 import TeamMemberForm from '@/components/admin/TeamMemberForm';
 import { authenticatedApiCall } from '@/lib/apiClient';
+import { TeamMember } from '@/lib/types';
 
-interface TeamMember {
-  id: string;
-  name: string;
-  role: string;
-  image: string;
-  bio: string;
-  created_at: string;
-  updated_at: string;
-}
 
 export default function TeamMembersPage() {
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
@@ -73,7 +64,7 @@ export default function TeamMembersPage() {
     }
   };
 
-  const handleFormSubmit = async (formData: any) => {
+  const handleFormSubmit = async (formData: TeamMember) => {
     try {
       const url = editingMember ? `/api/team-members/${editingMember.id}` : '/api/team-members';
       const method = editingMember ? 'PUT' : 'POST';

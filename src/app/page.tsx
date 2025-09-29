@@ -1,5 +1,5 @@
 'use client'
-import React, { useState, useEffect, useCallback } from 'react'
+import React, { useState, useEffect, useCallback, useMemo } from 'react'
 import Navbar from '@/components/navbar'
 import Image from 'next/image'
 import { Button } from '@/components/ui/button'
@@ -81,12 +81,12 @@ export default function Home() {
     fetchData();
   }, []);
 
-  const images = [
+  const images = useMemo(() => [
     "/Neon Edu v3.png",
     "/4.jpg", 
     "/Neon Edu v3 (1).png",
-    "/Neon Edu v3 Image.png"
-  ]
+    "/Neon Edu v3Image.png"
+  ], [])
 
   const timelineData = [
     {
@@ -523,13 +523,14 @@ export default function Home() {
                 }}
               >
                 {images.map((image, index) => (
-                  <img 
+                  <Image 
                     key={index}
                     src={image} 
                     alt={`Image ${index + 1}`} 
-                    className='w-full h-full object-cover flex-shrink-0'
-                    loading={index === 0 ? "eager" : "lazy"}
-                    decoding="async"
+                    fill
+                    className='object-cover flex-shrink-0'
+                    priority={index === 0}
+                    sizes="100vw"
                   />
                 ))}
               </div>

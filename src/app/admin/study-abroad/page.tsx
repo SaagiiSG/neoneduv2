@@ -1,23 +1,12 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
 import { Plus, Globe } from 'lucide-react';
 import toast from 'react-hot-toast';
 import SidebarLayout from '@/components/admin/SidebarLayout';
 import StudyAbroadCard from '@/components/admin/StudyAbroadCard';
 import StudyAbroadForm from '@/components/admin/StudyAbroadForm';
-
-interface StudyAbroadProgram {
-  id: string;
-  program_name: string;
-  country: string;
-  description: string;
-  link: string;
-  image?: string;
-  created_at: string;
-  updated_at: string;
-}
+import { StudyAbroadProgram } from '@/lib/types';
 
 export default function StudyAbroadPage() {
   const [programs, setPrograms] = useState<StudyAbroadProgram[]>([]);

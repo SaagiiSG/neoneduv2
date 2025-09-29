@@ -33,8 +33,9 @@ export async function GET() {
     }
 
     return NextResponse.json({ success: true, count: data?.length || 0, data })
-  } catch (error: any) {
-    return NextResponse.json({ success: false, message: 'Error fetching history', error: error.message }, { status: 500 })
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error'
+    return NextResponse.json({ success: false, message: 'Error fetching history', error: errorMessage }, { status: 500 })
   }
 }
 
@@ -52,8 +53,9 @@ export async function POST(request: Request) {
     if (error) throw error
 
     return NextResponse.json({ success: true, message: 'History item created', data }, { status: 201 })
-  } catch (error: any) {
-    return NextResponse.json({ success: false, message: 'Error creating history item', error: error.message }, { status: 500 })
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error'
+    return NextResponse.json({ success: false, message: 'Error creating history item', error: errorMessage }, { status: 500 })
   }
 }
 
@@ -73,8 +75,9 @@ export async function PUT(request: Request) {
     if (error) throw error
 
     return NextResponse.json({ success: true, message: 'History item updated', data })
-  } catch (error: any) {
-    return NextResponse.json({ success: false, message: 'Error updating history item', error: error.message }, { status: 500 })
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error'
+    return NextResponse.json({ success: false, message: 'Error updating history item', error: errorMessage }, { status: 500 })
   }
 }
 
@@ -88,8 +91,9 @@ export async function DELETE(request: Request) {
     if (error) throw error
 
     return NextResponse.json({ success: true, message: 'History item deleted' })
-  } catch (error: any) {
-    return NextResponse.json({ success: false, message: 'Error deleting history item', error: error.message }, { status: 500 })
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error'
+    return NextResponse.json({ success: false, message: 'Error deleting history item', error: errorMessage }, { status: 500 })
   }
 }
 
