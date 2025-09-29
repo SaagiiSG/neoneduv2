@@ -192,7 +192,7 @@ export default function StudyAbroadPage() {
             className="flex items-center space-x-2 bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-6 py-3 rounded-xl hover:from-purple-700 hover:to-indigo-700 transition-all duration-200 shadow-lg hover:shadow-xl hover:-translate-y-0.5"
           >
             <Plus className="h-5 w-5" />
-            <span className="font-medium">Add Program</span>
+            <span className="font-medium text-white">Add Program</span>
           </button>
         </div>
 
