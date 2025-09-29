@@ -66,9 +66,12 @@ export default function CourseForm({ course, onSubmit, onCancel }: CourseFormPro
       const submitData = {
         title: formData.title,
         description: `${formData.duration} - ${formData.levelitem1}, ${formData.levelitem2}`,
+        duration: formData.duration,
         link: 'https://neonedu.com', // Valid URL required by database constraint
         category: formData.duration, // Use duration as category for now
-        image: formData.image || null
+        image: formData.image || null,
+        levelitem1: formData.levelitem1,
+        levelitem2: formData.levelitem2
       };
       
       await onSubmit(submitData);
