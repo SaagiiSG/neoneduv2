@@ -46,7 +46,15 @@ export default function CoursesPage() {
 
   const handleCreate = async (data: Omit<Course, 'id' | 'created_at' | 'updated_at'>) => {
     try {
-      await coursesAPI.create(data);
+      // Ensure required fields have defaults
+      const courseData: Course = {
+        ...data,
+        duration: data.duration || '',
+        description: data.description || '',
+        image: data.image || '',
+        title: data.title || ''
+      };
+      await coursesAPI.create(courseData);
       toast.success('Course created successfully');
       setShowForm(false);
       fetchCourses();
@@ -57,7 +65,15 @@ export default function CoursesPage() {
 
   const handleUpdate = async (id: string, data: Omit<Course, 'id' | 'created_at' | 'updated_at'>) => {
     try {
-      await coursesAPI.update(id, data);
+      // Ensure required fields have defaults
+      const courseData: Course = {
+        ...data,
+        duration: data.duration || '',
+        description: data.description || '',
+        image: data.image || '',
+        title: data.title || ''
+      };
+      await coursesAPI.update(id, courseData);
       toast.success('Course updated successfully');
       setEditingCourse(null);
       fetchCourses();
