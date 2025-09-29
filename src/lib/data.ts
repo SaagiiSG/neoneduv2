@@ -90,11 +90,11 @@ export async function getHistoryData() {
 export function transformTeamData(dbData: TeamMember[]) {
   // Define the specific order for team members (using exact names from database)
   const teamOrder = [
-    'Dalantai.E',
-    'Anar.P', 
+    'Dalantai. E',
+    'Anar. P', 
     'Enkhjin. G',
     'Kherlen. Sh',
-    'Mandakhjargal.E',
+    'Mandakhjargal. E',
     'Enkhjin. T',
     'Yumjir. Ts'
   ];

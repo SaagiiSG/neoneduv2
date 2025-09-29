@@ -1057,7 +1057,7 @@ export default function Home() {
                         <div className='absolute bottom-8 left-4 flex flex-col items-start gap-6'>
 
                           <div className='flex items-center gap-2'>
-                            <GraduationCap />
+                            <GraduationCap className='text-white' />
                             <p className='text-[14px] font-montserrat font-medium text-[#E0E0E0] tracking-[0%]'>Difficulty :</p>
                           </div>
                           <div className='flex flex-col items-start gap-2'>
@@ -1065,9 +1065,9 @@ export default function Home() {
                             <p className='text-[16px] font-montserrat font-medium text-[#E0E0E0] tracking-[0%]'>{course.levelitem2}</p>
                           </div>
                         </div>
-                        <Button onClick={() => scrollToSection('contact')} className='absolute bottom-4 right-4 rounded-full border-1 border-[#BCBCBC] bg-white/20 backdrop-blur-sm hover:bg-white/30 hover:scale-105 duration-300 ease-in'> 
-                            <span>Apply Now</span> 
-                            <ChevronRight className='w-4 h-4' /> 
+                        <Button onClick={() => scrollToSection('contact')} className='absolute bottom-4 right-4 rounded-full border-1 border-[#BCBCBC] bg-white/20 backdrop-blur-sm hover:bg-white/30 hover:scale-105 duration-300 ease-in text-white'> 
+                            <span className='text-white'>Apply Now</span> 
+                            <ChevronRight className='w-4 h-4 text-white' /> 
                         </Button>
                     </div>
                   </motion.div>
