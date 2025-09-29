@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import SidebarLayout from '@/components/admin/SidebarLayout'
 import { Input } from '@/components/ui/input'
@@ -29,7 +29,7 @@ export default function HistoryAdminPage() {
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc')
   const [tableNotFound, setTableNotFound] = useState(false)
 
-  const load = async () => {
+  const load = useCallback(async () => {
     setLoading(true)
     try {
       const res = await fetch('/api/history')
@@ -47,16 +47,16 @@ export default function HistoryAdminPage() {
           toast.error('Failed to load history items')
         }
       }
-    } catch (error) {
+    } catch {
       toast.error('Error loading history items')
     } finally {
       setLoading(false)
     }
-  }
+  }, [sortOrder])
 
   useEffect(() => {
     load()
-  }, [sortOrder])
+  }, [sortOrder, load])
 
   const addItem = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -88,7 +88,7 @@ export default function HistoryAdminPage() {
       } else {
         toast.error(json.message || 'Failed to add history item')
       }
-    } catch (error) {
+    } catch {
       toast.error('Error adding history item')
     } finally {
       setSaving(false)
@@ -136,7 +136,7 @@ export default function HistoryAdminPage() {
       } else {
         toast.error(json.message || 'Failed to update history item')
       }
-    } catch (error) {
+    } catch {
       toast.error('Error updating history item')
     } finally {
       setSaving(false)
@@ -155,7 +155,7 @@ export default function HistoryAdminPage() {
       } else {
         toast.error(json.message || 'Failed to delete history item')
       }
-    } catch (error) {
+    } catch {
       toast.error('Error deleting history item')
     }
   }
@@ -292,7 +292,7 @@ export default function HistoryAdminPage() {
             <div className="p-8 text-center">
               <AlertCircle className="h-12 w-12 text-gray-400 mx-auto mb-4" />
               <p className="text-gray-600 mb-2">No history items yet</p>
-              <p className="text-sm text-gray-500">Click "Add History Item" to get started</p>
+              <p className="text-sm text-gray-500">Click &quot;Add History Item&quot; to get started</p>
             </div>
           ) : (
             <ul className="divide-y">

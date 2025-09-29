@@ -68,7 +68,7 @@ export default function StudyAbroadPage() {
     }
   };
 
-  const handleFormSubmit = async (formData: any) => {
+  const handleFormSubmit = async (formData: StudyAbroadProgram) => {
     try {
       const url = editingProgram ? `/api/study-abroad/${editingProgram.id}` : '/api/study-abroad';
       const method = editingProgram ? 'PUT' : 'POST';

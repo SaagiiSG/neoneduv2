@@ -3,9 +3,10 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { Users, BookOpen, Globe, Phone, ArrowRight, Clock } from 'lucide-react';
+import { Users, BookOpen, Globe, ArrowRight, Clock } from 'lucide-react';
 import SidebarLayout from '@/components/admin/SidebarLayout';
 import { createClient } from '@supabase/supabase-js';
+import { User } from '@supabase/supabase-js';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
@@ -43,7 +44,7 @@ const adminSections = [
 ];
 
 export default function AdminDashboard() {
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {

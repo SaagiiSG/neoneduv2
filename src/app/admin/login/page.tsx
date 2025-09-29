@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import toast from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { createClient } from '@supabase/supabase-js';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
@@ -210,12 +211,12 @@ export default function AdminLogin() {
 
         {/* Back to main site */}
         <div className="text-center mt-6">
-          <a
+          <Link
             href="/"
             className="text-blue-600 hover:text-blue-700 text-sm font-medium"
           >
             ← Back to main site
-          </a>
+          </Link>
         </div>
       </motion.div>
     </div>
