@@ -21,6 +21,7 @@ import {
 } from '@/lib/data'
 import { TeamMember, Course, StudyAbroadProgram, HistoryItem } from '@/lib/types';
 import { sendContactEmail } from '@/lib/emailServiceSimple'
+import { SupabaseProvider } from '@/contexts/SupabaseContext'
 
 
 export default function Home() {
@@ -45,16 +46,28 @@ export default function Home() {
   const [studyAbroadData, setStudyAbroadData] = useState<StudyAbroadProgram[]>([])
   const [historyData, setHistoryData] = useState<HistoryItem[]>([])
   
-  // Fetch data from database on component mount
+  // Fetch data from database on component mount - optimized for main page
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [teamMembers, courses, studyAbroad, history] = await Promise.all([
+        // Add timeout to prevent hanging on database calls
+        const timeoutPromise = new Promise((_, reject) => 
+          setTimeout(() => reject(new Error('Database timeout')), 8000) // Reduced timeout for main page
+        );
+
+        const dataPromise = Promise.all([
           getTeamMembers(),
           getCourses(),
           getStudyAbroadPrograms(),
           getHistoryData()
         ]);
+
+        const result = await Promise.race([
+          dataPromise,
+          timeoutPromise
+        ]) as [any[], any[], any[], any[]];
+        
+        const [teamMembers, courses, studyAbroad, history] = result;
 
         console.log('Raw team data:', teamMembers);
         console.log('Raw course data:', courses);
@@ -75,10 +88,14 @@ export default function Home() {
         setTeamData([]);
         setCourseData([]);
         setStudyAbroadData([]);
+        setHistoryData([]);
       }
     };
 
-    fetchData();
+    // Only fetch data if not in admin route
+    if (typeof window !== 'undefined' && !window.location.pathname.startsWith('/admin')) {
+      fetchData();
+    }
   }, []);
 
   const images = useMemo(() => [
@@ -232,18 +249,13 @@ export default function Home() {
     }
   }
 
-  // Preload all images function
+  // Preload critical images function
   const preloadImages = useCallback(async () => {
-    const allImages = [
+    // Only preload essential images, not all database images
+    const criticalImages = [
       // Hero carousel images
       ...images,
-      // Team member images
-      ...teamData.map(member => member.image),
-      // Course images
-      ...courseData.map(course => course.image),
-      // Study abroad images
-      ...studyAbroadData.flatMap(country => [country.image, country.dotbg]),
-      // Other images
+      // Logo and main assets
       "/Neon Edu Logo.png",
       "/Australia Hero Neon Edu.png",
       "/ourServiceBgDots.svg",
@@ -251,20 +263,30 @@ export default function Home() {
     ]
 
     let loadedCount = 0
-    const totalImages = allImages.length
+    const totalImages = criticalImages.length
 
-    const imagePromises = allImages.map((src) => {
+    const imagePromises = criticalImages.map((src) => {
       return new Promise((resolve) => {
         const img = new window.Image()
+        
+        // Add timeout to prevent hanging
+        const timeout = setTimeout(() => {
+          loadedCount++
+          setLoadingProgress(Math.round((loadedCount / totalImages) * 100))
+          resolve(false)
+        }, 5000) // 5 second timeout per image
+        
         img.onload = () => {
+          clearTimeout(timeout)
           loadedCount++
           setLoadingProgress(Math.round((loadedCount / totalImages) * 100))
           resolve(true)
         }
         img.onerror = () => {
+          clearTimeout(timeout)
           loadedCount++
           setLoadingProgress(Math.round((loadedCount / totalImages) * 100))
-          resolve(false) // Don't reject, just continue
+          resolve(false)
         }
         img.src = src
       })
@@ -273,20 +295,29 @@ export default function Home() {
     try {
       await Promise.all(imagePromises)
       setLoadingProgress(100)
-      console.log('All images preloaded successfully')
+      console.log('Critical images preloaded successfully')
     } catch (error) {
-      console.warn('Some images failed to preload:', error)
+      console.warn('Some critical images failed to preload:', error)
+      setLoadingProgress(100) // Force completion even if some images fail
     }
-  }, [images, teamData, courseData, studyAbroadData])
+  }, [images])
 
   // Loading and auto-play functionality
   useEffect(() => {
-    // Preload all images and then hide loading screen
+    // Preload critical images and then hide loading screen
     const loadEverything = async () => {
-      await preloadImages()
-      // Add a minimum loading time for better UX
-      await new Promise(resolve => setTimeout(resolve, 800))
-      setIsLoading(false)
+      try {
+        await preloadImages()
+        // Add a minimum loading time for better UX
+        await new Promise(resolve => setTimeout(resolve, 800))
+      } catch (error) {
+        console.warn('Loading error:', error)
+      } finally {
+        // Always hide loading screen after max 10 seconds
+        setTimeout(() => {
+          setIsLoading(false)
+        }, 1000)
+      }
     }
 
     loadEverything()
@@ -341,9 +372,10 @@ export default function Home() {
   }
 
   return (
-    <div className="h-screen bg-transparent flex flex-col items-center justify-start overflow-y-auto bg-gradient-to-b from-[#F4F4F4] to-[#FEF3E9]">
-      <Navbar />
-      <div className='w-full flex flex-col items-center justify-center'>
+    <SupabaseProvider>
+      <div className="h-screen bg-transparent flex flex-col items-center justify-start overflow-y-auto bg-gradient-to-b from-[#F4F4F4] to-[#FEF3E9]">
+        <Navbar />
+        <div className='w-full flex flex-col items-center justify-center'>
         <div className="relative w-full lg:w-[95%] h-auto flex flex-col items-center justify-center lg:mt-16 mt-0 px-4 md:px-8 lg:px-16">
           <div className='w-full flex flex-col-reverse gap-4 md:gap-0 md:flex-row md:justify-between justify-center items-center mt-[140px] z-10'>
           <motion.div 
@@ -1329,6 +1361,7 @@ export default function Home() {
                 <p className='text-[#FAFAFA]/70 text-[12px] sm:text-[14px] lg:text-[16px] font-montserrat font-medium mt-4 lg:mt-0 lg:absolute lg:bottom-2 lg:right-6'>© 2025 Neon Edu</p>
             </motion.footer>
         </div>
-    </div>
+      </div>
+    </SupabaseProvider>
   )
 }

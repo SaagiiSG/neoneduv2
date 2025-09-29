@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { SupabaseProvider } from "@/contexts/SupabaseContext";
 import { clashDisplay, montserrat } from "@/lib/fonts";
 
 const geistSans = Geist({
@@ -107,9 +106,7 @@ export default function RootLayout({
       <body
         className={`${clashDisplay.variable} ${montserrat.variable} ${geistSans.variable} ${geistMono.variable} antialiased `}
       >
-        <SupabaseProvider>
-          {children}
-        </SupabaseProvider>
+        {children}
       </body>
     </html>
   );
