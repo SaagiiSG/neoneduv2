@@ -14,6 +14,12 @@ const nextConfig: NextConfig = {
   experimental: {
     serverComponentsExternalPackages: ['cloudinary'],
   },
+  eslint: {
+    ignoreDuringBuilds: false,
+  },
+  typescript: {
+    ignoreBuildErrors: false,
+  },
 };
 
 export default nextConfig;
