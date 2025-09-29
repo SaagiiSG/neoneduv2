@@ -22,6 +22,7 @@ import {
 import { TeamMember, Course, StudyAbroadProgram, HistoryItem } from '@/lib/types';
 import { sendContactEmail } from '@/lib/emailServiceEmailJS'
 import { SupabaseProvider } from '@/contexts/SupabaseContext'
+import { heroImageUrls, fallbackImageUrls } from '@/lib/imageOptimization'
 
 
 export default function Home() {
@@ -99,10 +100,10 @@ export default function Home() {
   }, []);
 
   const images = useMemo(() => [
-    "/Neon Edu v3.png",
-    "/4.jpg", 
-    "/Neon Edu v3 (1).png",
-    "/Neon Edu v3 Image.png"
+    heroImageUrls.neonEduV3,
+    heroImageUrls.image4, 
+    heroImageUrls.neonEduV3Alt,
+    heroImageUrls.neonEduImage
   ], [])
 
   const timelineData = [
@@ -257,7 +258,7 @@ export default function Home() {
       ...images,
       // Logo and main assets
       "/Neon Edu Logo.png",
-      "/Australia Hero Neon Edu.png",
+      heroImageUrls.australiaHero,
       "/ourServiceBgDots.svg",
       "/our focus bg.svg"
     ]
@@ -526,13 +527,16 @@ export default function Home() {
             }}
           >
             <Image 
-              src="/Australia Hero Neon Edu.png" 
+              src={heroImageUrls.australiaHero} 
               alt='Australia Dots' 
               width={700} 
               height={663.71}
               loading="lazy"
               placeholder="blur"
               blurDataURL="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNzAwIiBoZWlnaHQ9IjY2MyIgdmlld0JveD0iMCAwIDcwMCA2NjMiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSI3MDAiIGhlaWdodD0iNjYzIiBmaWxsPSIjRjRGN0Y5Ii8+Cjwvc3ZnPgo="
+              onError={(e) => {
+                (e.target as HTMLImageElement).src = fallbackImageUrls.australiaHero;
+              }}
             />
           </motion.div>
         </div>
@@ -566,6 +570,16 @@ export default function Home() {
                       className='object-cover'
                       priority={index === 0}
                       sizes="100vw"
+                      onError={(e) => {
+                        // Fallback to original image if Cloudinary fails
+                        const fallbackImages = [
+                          fallbackImageUrls.neonEduV3,
+                          fallbackImageUrls.image4,
+                          fallbackImageUrls.neonEduV3Alt,
+                          fallbackImageUrls.neonEduImage
+                        ];
+                        (e.target as HTMLImageElement).src = fallbackImages[index];
+                      }}
                     />
                   </div>
                 ))}
@@ -598,7 +612,7 @@ export default function Home() {
                   viewport={{ once: true, amount: 0.3 }}
                   transition={{ duration: 0.6, delay: 0.6, ease: "easeOut" }}
                 >
-                  <p className='w-fit text-white font-montserrat font-bold text-center text-[14px] md:text-[22px]'>Neon Edu - Your gateway to global education</p>
+                  <p className='w-fit text-white font-montserrat font-bold text-center text-[14px] md:text-[22px]'>Neon Edu - Your gateway to global education!</p>
                 </motion.div>
                 {/* interactive dots */}
                 <motion.div 

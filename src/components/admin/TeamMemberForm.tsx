@@ -369,55 +369,55 @@ export default function TeamMemberForm({ member, onSubmit, onCancel }: TeamMembe
           </div>
 
           {/* Legacy Bio Field (Optional) */}
-          <div className="space-y-2">
+        <div className="space-y-2">
             <label htmlFor="bio" className="block text-sm font-medium text-gray-700">
               Additional Bio (Optional)
-            </label>
-            <div className="relative">
-              <Textarea
-                id="bio"
-                name="bio"
-                value={formData.bio}
-                onChange={handleInputChange}
-                className={`w-full text-base text-black resize-none pr-20 ${errors.bio ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : isFieldModified('bio') ? 'border-orange-400 focus:border-orange-500 focus:ring-orange-500' : 'border-gray-300 focus:border-blue-500 focus:ring-blue-500'}`}
+          </label>
+          <div className="relative">
+            <Textarea
+              id="bio"
+              name="bio"
+              value={formData.bio}
+              onChange={handleInputChange}
+              className={`w-full text-base text-black resize-none pr-20 ${errors.bio ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : isFieldModified('bio') ? 'border-orange-400 focus:border-orange-500 focus:ring-orange-500' : 'border-gray-300 focus:border-blue-500 focus:ring-blue-500'}`}
                 rows={3}
-                disabled={isSubmitting}
+              disabled={isSubmitting}
                 placeholder={member ? `Current bio: ${member.bio?.substring(0, 50)}${(member.bio?.length ?? 0) > 50 ? '...' : ''}` : "Additional information about this team member..."}
-                onFocus={(e) => {
-                  if (member && e.target.value === member.bio) {
-                    e.target.select();
-                  }
-                }}
-              />
-              {member && formData.bio === member.bio && (
-                <div className="absolute top-3 right-3 flex items-center space-x-2">
-                  <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">Current</span>
-                  <button
-                    type="button"
-                    onClick={() => setFormData(prev => ({ ...prev, bio: '' }))}
-                    className="text-gray-400 hover:text-red-500 transition-colors"
-                    title="Clear field"
-                  >
-                    <XCircle className="h-4 w-4" />
-                  </button>
-                </div>
-              )}
-              {member && isFieldModified('bio') && (
-                <div className="absolute top-3 right-3">
-                  <span className="text-xs text-orange-600 bg-orange-100 px-2 py-1 rounded">Modified</span>
-                </div>
-              )}
-            </div>
-            <div className="flex justify-between items-center text-sm">
-              {errors.bio ? (
-                <p className="text-red-600 flex items-center">
-                  <span className="w-1 h-1 bg-red-500 rounded-full mr-2"></span>
-                  {errors.bio}
-                </p>
-              ) : (
+              onFocus={(e) => {
+                if (member && e.target.value === member.bio) {
+                  e.target.select();
+                }
+              }}
+            />
+            {member && formData.bio === member.bio && (
+              <div className="absolute top-3 right-3 flex items-center space-x-2">
+                <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">Current</span>
+                <button
+                  type="button"
+                  onClick={() => setFormData(prev => ({ ...prev, bio: '' }))}
+                  className="text-gray-400 hover:text-red-500 transition-colors"
+                  title="Clear field"
+                >
+                  <XCircle className="h-4 w-4" />
+                </button>
+              </div>
+            )}
+            {member && isFieldModified('bio') && (
+              <div className="absolute top-3 right-3">
+                <span className="text-xs text-orange-600 bg-orange-100 px-2 py-1 rounded">Modified</span>
+              </div>
+            )}
+          </div>
+          <div className="flex justify-between items-center text-sm">
+            {errors.bio ? (
+              <p className="text-red-600 flex items-center">
+                <span className="w-1 h-1 bg-red-500 rounded-full mr-2"></span>
+                {errors.bio}
+              </p>
+            ) : (
                 <p className="text-gray-600">Additional information (optional)</p>
-              )}
-              <p className="text-gray-600">{formData.bio.length}/500</p>
+            )}
+            <p className="text-gray-600">{formData.bio.length}/500</p>
             </div>
           </div>
         </div>
