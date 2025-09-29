@@ -85,7 +85,7 @@ export default function Home() {
     "/Neon Edu v3.png",
     "/4.jpg", 
     "/Neon Edu v3 (1).png",
-    "/Neon Edu v3Image.png"
+    "/Neon Edu v3 Image.png"
   ], [])
 
   const timelineData = [
