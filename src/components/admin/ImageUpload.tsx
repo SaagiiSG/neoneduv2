@@ -1,8 +1,8 @@
 'use client';
 
 import React, { useState, useRef } from 'react';
-import { motion } from 'framer-motion';
-import { Upload, X, Image as ImageIcon } from 'lucide-react';
+import { Upload, X } from 'lucide-react';
+import Image from 'next/image';
 
 interface ImageUploadProps {
   currentImage?: string;
@@ -105,10 +105,12 @@ export default function ImageUpload({
       {preview ? (
         <div className="relative group">
           <div className="relative w-full h-48 border-2 border-gray-300 rounded-lg overflow-hidden">
-            <img
+            <Image
               src={preview}
               alt="Preview"
               className="w-full h-full object-cover"
+              fill
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
             />
             <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all duration-200 flex items-center justify-center">
               <button

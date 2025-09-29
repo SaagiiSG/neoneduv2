@@ -8,19 +8,18 @@ import {
   Users, 
   BookOpen, 
   Globe, 
-  Phone, 
   Menu, 
   X, 
   LogOut, 
   User,
   Home,
-  ChevronLeft,
   ChevronRight,
   Clock
 } from 'lucide-react';
 import { createClient } from '@supabase/supabase-js';
 import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
+import { User as UserType } from '../lib/types';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
@@ -67,7 +66,7 @@ const navigationItems = [
 export default function SidebarLayout({ children }: SidebarLayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<UserType | null>(null);
   const [, setSessionExpired] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
@@ -108,7 +107,7 @@ export default function SidebarLayout({ children }: SidebarLayoutProps) {
       }
       
       router.push('/admin/login');
-    } catch (error) {
+    } catch {
       toast.error('Error logging out');
       router.push('/admin/login');
     }

@@ -5,7 +5,6 @@ import { motion } from 'framer-motion';
 import { ArrowLeft, Save, X, Upload, Image as ImageIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
 import Image from 'next/image';
 import toast from 'react-hot-toast';
 

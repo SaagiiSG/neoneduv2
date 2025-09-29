@@ -4,10 +4,11 @@ import React from 'react';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { Edit, Trash2 } from 'lucide-react';
+import { TeamMember, Course, StudyAbroadProgram } from '../lib/types';
 
 // Team Member Preview Card
 export function TeamMemberCard({ member, onEdit, onDelete }: {
-  member: any;
+  member: TeamMember;
   onEdit: () => void;
   onDelete: () => void;
 }) {
@@ -76,7 +77,7 @@ export function TeamMemberCard({ member, onEdit, onDelete }: {
 
 // Course Preview Card
 export function CourseCard({ course, onEdit, onDelete }: {
-  course: any;
+  course: Course;
   onEdit: () => void;
   onDelete: () => void;
 }) {
@@ -131,7 +132,7 @@ export function CourseCard({ course, onEdit, onDelete }: {
 
 // Study Abroad Preview Card
 export function StudyAbroadCard({ program, onEdit, onDelete }: {
-  program: any;
+  program: StudyAbroadProgram;
   onEdit: () => void;
   onDelete: () => void;
 }) {
