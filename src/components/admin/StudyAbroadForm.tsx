@@ -9,15 +9,7 @@ import { Textarea } from '@/components/ui/textarea';
 import Image from 'next/image';
 import toast from 'react-hot-toast';
 
-interface StudyAbroadProgram {
-  id: string;
-  program_name: string;
-  country: string;
-  description: string;
-  universities: string;
-  link: string;
-  image?: string;
-}
+import { StudyAbroadProgram } from '@/lib/types';
 
 interface StudyAbroadFormProps {
   program?: StudyAbroadProgram | null;

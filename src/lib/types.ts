@@ -2,11 +2,15 @@
 export interface TeamMember {
   id?: string;
   name: string;
+  role?: string;
   image: string;
-  position: string;
-  ditem1: string;
-  ditem2: string;
-  ditem3: string;
+  bio?: string;
+  position?: string;
+  ditem1?: string;
+  ditem2?: string;
+  ditem3?: string;
+  created_at?: string;
+  updated_at?: string;
   order?: number;
 }
 
@@ -29,12 +33,16 @@ export interface Course {
 // Study abroad types
 export interface StudyAbroadProgram {
   id?: string;
-  programName: string;
+  programName?: string;
+  program_name?: string;
   country: string;
   description: string;
   universities: string;
   image: string;
   dotbg: string;
+  link?: string;
+  created_at?: string;
+  updated_at?: string;
   order?: number;
 }
 

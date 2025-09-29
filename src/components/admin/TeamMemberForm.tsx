@@ -8,15 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import ImageUpload from './ImageUpload';
 
-interface TeamMember {
-  id: string;
-  name: string;
-  role: string;
-  image: string;
-  bio: string;
-  created_at: string;
-  updated_at: string;
-}
+import { TeamMember } from '@/lib/types';
 
 interface TeamMemberFormProps {
   member?: TeamMember | null;

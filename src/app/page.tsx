@@ -523,15 +523,19 @@ export default function Home() {
                 }}
               >
                 {images.map((image, index) => (
-                  <Image 
+                  <div 
                     key={index}
-                    src={image} 
-                    alt={`Image ${index + 1}`} 
-                    fill
-                    className='object-cover flex-shrink-0'
-                    priority={index === 0}
-                    sizes="100vw"
-                  />
+                    className='relative w-full h-full flex-shrink-0'
+                  >
+                    <Image 
+                      src={image} 
+                      alt={`Image ${index + 1}`} 
+                      fill
+                      className='object-cover'
+                      priority={index === 0}
+                      sizes="100vw"
+                    />
+                  </div>
                 ))}
               </div>
             </div>
