@@ -532,10 +532,13 @@ export default function Home() {
               width={700} 
               height={663.71}
               loading="lazy"
-              placeholder="blur"
-              blurDataURL="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNzAwIiBoZWlnaHQ9IjY2MyIgdmlld0JveD0iMCAwIDcwMCA2NjMiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSI3MDAiIGhlaWdodD0iNjYzIiBmaWxsPSIjRjRGN0Y5Ii8+Cjwvc3ZnPgo="
+              unoptimized={true}
               onError={(e) => {
+                console.error('Failed to load Australia hero image:', heroImageUrls.australiaHero);
                 (e.target as HTMLImageElement).src = fallbackImageUrls.australiaHero;
+              }}
+              onLoad={() => {
+                console.log('Successfully loaded Australia hero image');
               }}
             />
           </motion.div>
@@ -570,8 +573,10 @@ export default function Home() {
                       className='object-cover'
                       priority={index === 0}
                       sizes="100vw"
+                      unoptimized={true}
                       onError={(e) => {
-                        // Fallback to original image if Cloudinary fails
+                        console.error(`Failed to load image ${index + 1}:`, image);
+                        // Fallback to original image if any image fails
                         const fallbackImages = [
                           fallbackImageUrls.neonEduV3,
                           fallbackImageUrls.image4,
@@ -579,6 +584,9 @@ export default function Home() {
                           fallbackImageUrls.neonEduImage
                         ];
                         (e.target as HTMLImageElement).src = fallbackImages[index];
+                      }}
+                      onLoad={() => {
+                        console.log(`Successfully loaded image ${index + 1}`);
                       }}
                     />
                   </div>
@@ -666,8 +674,13 @@ export default function Home() {
                   width={643} 
                   height={489}
                   loading="lazy"
-                  placeholder="blur"
-                  blurDataURL="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjQzIiBoZWlnaHQ9IjQ4OSIgdmlld0JveD0iMCAwIDY0MyA0ODkiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSI2NDMiIGhlaWdodD0iNDg5IiBmaWxsPSIjRjRGN0Y5Ii8+Cjwvc3ZnPgo="
+                  unoptimized={true}
+                  onError={(e) => {
+                    console.error('Failed to load ourServiceBgDots.svg');
+                  }}
+                  onLoad={() => {
+                    console.log('Successfully loaded ourServiceBgDots.svg');
+                  }}
                 />
               </motion.div>
             
@@ -845,7 +858,7 @@ export default function Home() {
                     transition={{ duration: 0.6, delay: 0.8, ease: "easeOut" }}
                   >
                     <p className='text-[22px] text-[#ff872f] font-medium -mb-4'>*</p> 
-                    <p className='text-[22px] md:text-[22px] text-left pl-2'>Helping students improve their English and Academic English skills</p>
+                    <p className='text-[20px] md:text-[22px] text-left pl-2'>Helping students improve their English and Academic English skills</p>
                     
                   </motion.div>
                   <motion.div 
@@ -857,7 +870,7 @@ export default function Home() {
                   >
                    
                     <p className='text-[22px] text-[#ff872f] font-medium -mb-4'>*</p> 
-                    <p className='text-[22px] md:text-[22px] text-left pl-2 '>Guiding them step by step toward studying at top universities abroad</p>
+                    <p className='text-[20px] md:text-[22px] text-left pl-2 '>Guiding them step by step toward studying at top universities abroad</p>
                   </motion.div>
                   
               </motion.div>
@@ -934,7 +947,7 @@ export default function Home() {
               viewport={{ once: true, amount: 0.3 }}
               transition={{ duration: 0.6, delay: 0.4, ease: "easeOut" }}
             > 
-              Our history
+              Our History
             </motion.div> 
 
            <section className='w-full h-full flex flex-col items-start justify-start'>

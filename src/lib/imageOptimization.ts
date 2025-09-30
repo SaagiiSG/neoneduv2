@@ -35,38 +35,13 @@ export function getOptimizedImageUrl(
   return `https://res.cloudinary.com/${cloudName}/image/upload/${transformationString}/${publicId}`;
 }
 
-// Predefined optimized URLs for hero images
+// Predefined optimized URLs for hero images - Using local images for reliability
 export const heroImageUrls = {
-  neonEduV3: getOptimizedImageUrl('neonedu/hero/neon-edu-v3', {
-    width: 1200,
-    height: 800,
-    quality: 'auto:good',
-    format: 'webp'
-  }),
-  image4: getOptimizedImageUrl('neonedu/hero/image-4', {
-    width: 1200,
-    height: 800,
-    quality: 'auto:good',
-    format: 'webp'
-  }),
-  neonEduV3Alt: getOptimizedImageUrl('neonedu/hero/neon-edu-v3-alt', {
-    width: 1200,
-    height: 800,
-    quality: 'auto:good',
-    format: 'webp'
-  }),
-  neonEduImage: getOptimizedImageUrl('neonedu/hero/neon-edu-image', {
-    width: 1200,
-    height: 800,
-    quality: 'auto:good',
-    format: 'webp'
-  }),
-  australiaHero: getOptimizedImageUrl('neonedu/hero/australia-hero', {
-    width: 700,
-    height: 664,
-    quality: 'auto:good',
-    format: 'webp'
-  })
+  neonEduV3: "/Neon Edu v3.png",
+  image4: "/4.jpg", 
+  neonEduV3Alt: "/Neon Edu v3 (1).png",
+  neonEduImage: "/Neon Edu v3 Image.png",
+  australiaHero: "/Australia Hero Neon Edu.png"
 };
 
 // Fallback to original URLs if Cloudinary fails
