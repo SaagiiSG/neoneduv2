@@ -1,5 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
 import { TeamMember, Course, StudyAbroadProgram } from './types';
+import { optimizeImageUrl } from './imageOptimization';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
@@ -148,7 +149,13 @@ export function transformTeamData(dbData: TeamMember[]) {
 
       return {
         name: member.name,
-        image: member.image,
+        image: optimizeImageUrl(member.image, { 
+          width: 300, 
+          height: 400, 
+          quality: 'auto:good',
+          crop: 'fill',
+          gravity: 'face'
+        }),
         position: member.role,
         ditem1,
         ditem2,
@@ -188,13 +195,18 @@ export function transformCourseData(dbData: Course[]): Omit<Course, 'id' | 'crea
       description: course.description,
       duration: course.duration || (course.description?.includes('months') ? 
         course.description.match(/\d+ months/)?.[0] || '4 months' : '4 months'),
-      image: course.image || (course.title === 'General English' ? '/classroom2.svg' :
+      image: optimizeImageUrl(course.image || (course.title === 'General English' ? '/classroom2.svg' :
              course.title === 'IELTS Preparation' ? '/classroom1.png' :
              course.title === 'Academic English' ? '/office.svg' :
              course.category === 'General English' ? '/classroom2.svg' :
              course.category === 'IELTS Preparation' ? '/classroom1.png' :
              course.category === 'Academic English' ? '/office.svg' :
-             '/office.svg'),
+             '/office.svg'), { 
+        width: 400, 
+        height: 300, 
+        quality: 'auto:good',
+        crop: 'fill'
+      }),
       levelitem1: course.levelitem1 || (course.description?.includes('Beginner') ? 'Beginner' :
                   course.description?.includes('Upper Intermediate') ? 'Upper Intermediate' :
                   'Research methodology'),
@@ -257,7 +269,12 @@ export function transformStudyAbroadData(dbData: StudyAbroadProgram[]) {
     };
     
     const imageInfo = {
-      image: uploadedImage || countryImageInfo.image,
+      image: optimizeImageUrl(uploadedImage || countryImageInfo.image, { 
+        width: 800, 
+        height: 600, 
+        quality: 'auto:good',
+        crop: 'fill'
+      }),
       dotbg: countryImageInfo.dotbg
     };
 

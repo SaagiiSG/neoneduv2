@@ -66,7 +66,7 @@ export function SSRHeroImage({
       fill
       className={className}
       priority={priority}
-      quality={90}
+      quality={85}
       sizes="100vw"
       placeholder="blur"
     />
@@ -90,7 +90,7 @@ export function SSRTeamImage({
       width={200}
       height={250}
       className={className}
-      quality={85}
+      quality={80}
       sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 200px"
       placeholder="blur"
     />
@@ -113,7 +113,7 @@ export function SSRBackgroundImage({
       alt={alt}
       fill
       className={className}
-      quality={80}
+      quality={75}
       sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
       placeholder="blur"
     />

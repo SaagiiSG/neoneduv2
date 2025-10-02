@@ -1,4 +1,3 @@
-'use client'
 import React, { useState, useEffect, useCallback, useMemo } from 'react'
 import Navbar from '@/components/navbar'
 import Image from 'next/image'
@@ -23,10 +22,22 @@ import {
 import { TeamMember, Course, StudyAbroadProgram, HistoryItem } from '@/lib/types';
 import { sendContactEmail } from '@/lib/emailServiceEmailJS'
 import { SupabaseProvider } from '@/contexts/SupabaseContext'
-import { heroImageUrls, fallbackImageUrls } from '@/lib/imageOptimization'
+import { heroImageUrls, fallbackImageUrls, preloadImageUrls } from '@/lib/imageOptimization'
+
+// Client component wrapper for interactive features
+function HomeClient({ 
+  initialTeamData, 
+  initialCourseData, 
+  initialStudyAbroadData, 
+  initialHistoryData 
+}: {
+  initialTeamData: TeamMember[];
+  initialCourseData: Course[];
+  initialStudyAbroadData: StudyAbroadProgram[];
+  initialHistoryData: HistoryItem[];
+}) {
 
 
-export default function Home() {
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
   const [isLoading, setIsLoading] = useState(true)
   const [loadingProgress, setLoadingProgress] = useState(0)
@@ -44,63 +55,11 @@ export default function Home() {
   const [copiedEmail, setCopiedEmail] = useState<string | null>(null)
   const shouldReduceMotion = useReducedMotion()
   
-  // Database data state
-  const [teamData, setTeamData] = useState<TeamMember[]>([])
-  const [courseData, setCourseData] = useState<Course[]>([])
-  const [studyAbroadData, setStudyAbroadData] = useState<StudyAbroadProgram[]>([])
-  const [historyData, setHistoryData] = useState<HistoryItem[]>([])
-  
-  // Fetch data from database on component mount - optimized for main page
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        // Add timeout to prevent hanging on database calls
-        const timeoutPromise = new Promise((_, reject) => 
-          setTimeout(() => reject(new Error('Database timeout')), 8000) // Reduced timeout for main page
-        );
-
-        const dataPromise = Promise.all([
-          getTeamMembers(),
-          getCourses(),
-          getStudyAbroadPrograms(),
-          getHistoryData()
-        ]);
-
-        const result = await Promise.race([
-          dataPromise,
-          timeoutPromise
-        ]) as [any[], any[], any[], any[]];
-        
-        const [teamMembers, courses, studyAbroad, history] = result;
-
-        console.log('Raw team data:', teamMembers);
-        console.log('Raw course data:', courses);
-        
-        const transformedTeam = transformTeamData(teamMembers);
-        const transformedCourses = transformCourseData(courses);
-        
-        console.log('Transformed team data:', transformedTeam);
-        console.log('Transformed course data:', transformedCourses);
-        
-        setTeamData(transformedTeam);
-        setCourseData(transformedCourses);
-        setStudyAbroadData(transformStudyAbroadData(studyAbroad));
-        setHistoryData(history || []);
-      } catch (error) {
-        console.error('Error fetching data:', error);
-        // Fallback to empty arrays if database fetch fails
-        setTeamData([]);
-        setCourseData([]);
-        setStudyAbroadData([]);
-        setHistoryData([]);
-      }
-    };
-
-    // Only fetch data if not in admin route
-    if (typeof window !== 'undefined' && !window.location.pathname.startsWith('/admin')) {
-      fetchData();
-    }
-  }, []);
+  // Use SSR data as initial state
+  const [teamData, setTeamData] = useState<TeamMember[]>(initialTeamData)
+  const [courseData, setCourseData] = useState<Course[]>(initialCourseData)
+  const [studyAbroadData, setStudyAbroadData] = useState<StudyAbroadProgram[]>(initialStudyAbroadData)
+  const [historyData, setHistoryData] = useState<HistoryItem[]>(initialHistoryData)
 
   const images = useMemo(() => [
     heroImageUrls.neonEduV3,
@@ -253,38 +212,43 @@ export default function Home() {
     }
   }
 
-  // Progressive loading sequence - hero first, then rest
+  // Optimized loading sequence with preloading and lazy loading
   const preloadImages = useCallback(async () => {
-    // Phase 1: Load hero carousel images first
-    const heroImages = images
-    let loadedCount = 0
-    const totalHeroImages = heroImages.length
-
-    console.log('Phase 1: Loading hero carousel images...')
+    // Phase 1: Preload critical images first (hero + logo)
+    const criticalImages = [
+      images[0], // First hero image
+      preloadImageUrls[2], // Logo
+      heroImageUrls.australiaHero
+    ]
     
-    const heroImagePromises = heroImages.map((src, index) => {
+    let loadedCount = 0
+    const totalCriticalImages = criticalImages.length
+
+    console.log('Phase 1: Loading critical images...')
+    
+    const criticalImagePromises = criticalImages.map((src, index) => {
       return new Promise((resolve) => {
         const img = new window.Image()
         
         const timeout = setTimeout(() => {
           loadedCount++
-          const progress = Math.round((loadedCount / totalHeroImages) * 50) // First 50% for hero
+          const progress = Math.round((loadedCount / totalCriticalImages) * 60) // 60% for critical
           setLoadingProgress(progress)
           resolve(false)
-        }, 3000) // 3 second timeout per hero image
+        }, 1500) // Reduced timeout to 1.5 seconds
         
         img.onload = () => {
           clearTimeout(timeout)
           loadedCount++
-          const progress = Math.round((loadedCount / totalHeroImages) * 50) // First 50% for hero
+          const progress = Math.round((loadedCount / totalCriticalImages) * 60)
           setLoadingProgress(progress)
-          console.log(`Hero image ${index + 1} loaded`)
+          console.log(`Critical image ${index + 1} loaded`)
           resolve(true)
         }
         img.onerror = () => {
           clearTimeout(timeout)
           loadedCount++
-          const progress = Math.round((loadedCount / totalHeroImages) * 50)
+          const progress = Math.round((loadedCount / totalCriticalImages) * 60)
           setLoadingProgress(progress)
           resolve(false)
         }
@@ -293,19 +257,15 @@ export default function Home() {
     })
 
     try {
-      await Promise.all(heroImagePromises)
+      await Promise.all(criticalImagePromises)
       setHeroImagesLoaded(true)
-      console.log('Phase 1 complete: Hero images loaded')
+      console.log('Phase 1 complete: Critical images loaded')
       
-      // Phase 2: Load remaining images in background
-      console.log('Phase 2: Loading remaining images...')
-      const remainingImages = [
-        "/Neon Edu Logo.png",
-        heroImageUrls.australiaHero,
-        "/ourServiceBgDots.svg"
-      ]
+      // Phase 2: Load remaining hero images in background
+      console.log('Phase 2: Loading remaining hero images...')
+      const remainingHeroImages = images.slice(1)
       
-      const remainingPromises = remainingImages.map((src) => {
+      const remainingHeroPromises = remainingHeroImages.map((src) => {
         return new Promise((resolve) => {
           const img = new window.Image()
           img.onload = () => resolve(true)
@@ -314,7 +274,7 @@ export default function Home() {
         })
       })
       
-      await Promise.all(remainingPromises)
+      await Promise.all(remainingHeroPromises)
       setAllImagesLoaded(true)
       setLoadingProgress(100)
       console.log('Phase 2 complete: All images loaded')
@@ -349,12 +309,12 @@ export default function Home() {
     }
   }, [images.length, preloadImages])
 
-  // Hide loading screen when hero images are loaded
+  // Hide loading screen when hero images are loaded - much faster now
   useEffect(() => {
     if (heroImagesLoaded) {
       setTimeout(() => {
         setIsLoading(false)
-      }, 500) // Small delay for smooth transition
+      }, 200) // Reduced delay for faster loading
     }
   }, [heroImagesLoaded])
 
@@ -393,7 +353,7 @@ export default function Home() {
           />
           <div className="flex flex-col items-center gap-2">
             <p className="text-[#616161] text-sm font-montserrat">
-              {heroImagesLoaded ? 'Loading remaining content...' : 'Loading hero images...'}
+              {heroImagesLoaded ? 'Almost ready...' : 'Loading critical images...'}
             </p>
             <div className="w-32 h-2 bg-gray-200 rounded-full overflow-hidden">
               <motion.div
@@ -406,7 +366,7 @@ export default function Home() {
             <p className="text-[#616161] text-xs font-montserrat">{loadingProgress}%</p>
             {heroImagesLoaded && (
               <p className="text-[#FF872F] text-xs font-montserrat animate-pulse">
-                Hero ready! Loading rest...
+                Ready to go!
               </p>
             )}
           </div>
@@ -1082,6 +1042,8 @@ export default function Home() {
                       className='absolute top-0 left-0 w-full h-full object-cover'
                       fill
                       sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                      loading="lazy"
+                      quality={85}
                     />
                     <div className='z-50'>
                         <div>
@@ -1154,6 +1116,8 @@ export default function Home() {
                        className='absolute top-0 left-0 w-full h-full object-cover'
                        fill
                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                       loading="lazy"
+                       quality={85}
                      />
                      <Image 
                        src={country.dotbg} 
@@ -1161,6 +1125,8 @@ export default function Home() {
                        className='absolute top-4 sm:top-6 md:top-8 -right-8 sm:-right-12 md:-right-14 w-full h-full z-30'
                        fill
                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                       loading="lazy"
+                       quality={80}
                      /> 
                    </motion.div>
                  ))}
@@ -1355,12 +1321,13 @@ export default function Home() {
             >
                 <div className='w-full lg:w-auto flex flex-col items-start justify-start gap-4 sm:gap-5 lg:gap-6'>
                   <Image 
-                    src="/Neon Edu Logo.png" 
+                    src={preloadImageUrls[2]} 
                     alt="logo" 
                     width={48} 
                     height={48}
                     className='sm:w-16 sm:h-16'
                     loading="lazy"
+                    quality={90}
                   />
                   <div className='w-full flex flex-col sm:flex-row items-start sm:items-center justify-start gap-2 text-[14px] sm:text-[16px]'> 
                     <Phone className='text-[#FF872F] w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0 mt-0.5 sm:mt-0' /> 
@@ -1395,4 +1362,39 @@ export default function Home() {
       </div>
     </SupabaseProvider>
   )
+}
+
+// Server component for SSR data fetching
+export default async function Home() {
+  // Fetch data on the server for faster initial load
+  let teamData: TeamMember[] = [];
+  let courseData: Course[] = [];
+  let studyAbroadData: StudyAbroadProgram[] = [];
+  let historyData: HistoryItem[] = [];
+
+  try {
+    const [teamMembers, courses, studyAbroad, history] = await Promise.all([
+      getTeamMembers(),
+      getCourses(),
+      getStudyAbroadPrograms(),
+      getHistoryData()
+    ]);
+
+    teamData = transformTeamData(teamMembers);
+    courseData = transformCourseData(courses);
+    studyAbroadData = transformStudyAbroadData(studyAbroad);
+    historyData = history || [];
+  } catch (error) {
+    console.error('Error fetching SSR data:', error);
+    // Fallback to empty arrays - client will handle gracefully
+  }
+
+  return (
+    <HomeClient 
+      initialTeamData={teamData}
+      initialCourseData={courseData}
+      initialStudyAbroadData={studyAbroadData}
+      initialHistoryData={historyData}
+    />
+  );
 }

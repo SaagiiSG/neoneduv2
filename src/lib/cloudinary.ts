@@ -31,8 +31,9 @@ export async function uploadImage(file: File, folder: string = 'neonedu'): Promi
         timeout: 60000, // 60 second timeout
         chunk_size: 6000000, // 6MB chunks
         eager: [
-          { width: 800, height: 600, crop: 'limit' }, // Optimized version
-          { width: 400, height: 300, crop: 'limit' }  // Thumbnail version
+          { width: 1200, height: 800, crop: 'fill', quality: 'auto:good', format: 'webp' }, // Hero version
+          { width: 800, height: 600, crop: 'limit', quality: 'auto:good', format: 'webp' }, // Standard version
+          { width: 400, height: 300, crop: 'limit', quality: 'auto:good', format: 'webp' }  // Thumbnail version
         ]
       }),
       new Promise((_, reject) => 
