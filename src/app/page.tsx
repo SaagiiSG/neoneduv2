@@ -250,17 +250,12 @@ export default function Home() {
     }
   }
 
-  // Preload critical images function
+  // Preload critical images function - optimized for speed
   const preloadImages = useCallback(async () => {
-    // Only preload essential images, not all database images
+    // Only preload the first hero image for instant display
     const criticalImages = [
-      // Hero carousel images
-      ...images,
-      // Logo and main assets
-      "/Neon Edu Logo.png",
-      heroImageUrls.australiaHero,
-      "/ourServiceBgDots.svg",
-      "/our focus bg.svg"
+      images[0], // Only the first carousel image
+      "/Neon Edu Logo.png"
     ]
 
     let loadedCount = 0
@@ -270,12 +265,12 @@ export default function Home() {
       return new Promise((resolve) => {
         const img = new window.Image()
         
-        // Add timeout to prevent hanging
+        // Reduced timeout for faster loading
         const timeout = setTimeout(() => {
           loadedCount++
           setLoadingProgress(Math.round((loadedCount / totalImages) * 100))
           resolve(false)
-        }, 5000) // 5 second timeout per image
+        }, 2000) // 2 second timeout per image
         
         img.onload = () => {
           clearTimeout(timeout)
@@ -303,21 +298,21 @@ export default function Home() {
     }
   }, [images])
 
-  // Loading and auto-play functionality
+  // Loading and auto-play functionality - optimized for speed
   useEffect(() => {
     // Preload critical images and then hide loading screen
     const loadEverything = async () => {
       try {
         await preloadImages()
-        // Add a minimum loading time for better UX
-        await new Promise(resolve => setTimeout(resolve, 800))
+        // Reduced minimum loading time for faster UX
+        await new Promise(resolve => setTimeout(resolve, 300))
       } catch (error) {
         console.warn('Loading error:', error)
       } finally {
-        // Always hide loading screen after max 10 seconds
+        // Always hide loading screen quickly
         setTimeout(() => {
           setIsLoading(false)
-        }, 1000)
+        }, 500)
       }
     }
 
@@ -336,12 +331,24 @@ export default function Home() {
 
   if (isLoading) {
     return (
-      <div className="h-screen bg-gradient-to-b from-[#F4F4F4] to-[#FEF3E9] flex items-center justify-center">
+      <div className="h-screen bg-gradient-to-b from-[#F4F4F4] to-[#FEF3E9] flex items-center justify-center relative overflow-hidden">
+        {/* Preload only first hero image in background */}
+        <div className="absolute inset-0 opacity-5 pointer-events-none">
+          <Image 
+            src={images[0]} 
+            alt="Preloading..." 
+            fill
+            className="object-cover"
+            priority
+            quality={85}
+          />
+        </div>
+        
         <motion.div
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.5 }}
-          className="flex flex-col items-center gap-6"
+          className="flex flex-col items-center gap-6 z-10"
         >
           <Image 
             src="/Neon Edu Logo.png" 
@@ -532,14 +539,9 @@ export default function Home() {
               width={700} 
               height={663.71}
               loading="lazy"
-              unoptimized={true}
-              onError={(e) => {
-                console.error('Failed to load Australia hero image:', heroImageUrls.australiaHero);
-                (e.target as HTMLImageElement).src = fallbackImageUrls.australiaHero;
-              }}
-              onLoad={() => {
-                console.log('Successfully loaded Australia hero image');
-              }}
+              quality={85}
+              placeholder="blur"
+              blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAIAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R//2Q=="
             />
           </motion.div>
         </div>
@@ -573,21 +575,9 @@ export default function Home() {
                       className='object-cover'
                       priority={index === 0}
                       sizes="100vw"
-                      unoptimized={true}
-                      onError={(e) => {
-                        console.error(`Failed to load image ${index + 1}:`, image);
-                        // Fallback to original image if any image fails
-                        const fallbackImages = [
-                          fallbackImageUrls.neonEduV3,
-                          fallbackImageUrls.image4,
-                          fallbackImageUrls.neonEduV3Alt,
-                          fallbackImageUrls.neonEduImage
-                        ];
-                        (e.target as HTMLImageElement).src = fallbackImages[index];
-                      }}
-                      onLoad={() => {
-                        console.log(`Successfully loaded image ${index + 1}`);
-                      }}
+                      quality={85}
+                      placeholder="blur"
+                      blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAIAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R//2Q=="
                     />
                   </div>
                 ))}
@@ -674,13 +664,7 @@ export default function Home() {
                   width={643} 
                   height={489}
                   loading="lazy"
-                  unoptimized={true}
-                  onError={(e) => {
-                    console.error('Failed to load ourServiceBgDots.svg');
-                  }}
-                  onLoad={() => {
-                    console.log('Successfully loaded ourServiceBgDots.svg');
-                  }}
+                  quality={85}
                 />
               </motion.div>
             

@@ -4,13 +4,11 @@ import React from 'react'
 import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Skeleton } from '@/components/ui/skeleton'
 
 const Navbar = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false)
     const [activeSection, setActiveSection] = useState('top')
     const [isScrolling, setIsScrolling] = useState(false)
-    const [loadingButton, setLoadingButton] = useState<string | null>(null)
 
     const navItems = [
         {
@@ -57,8 +55,6 @@ const Navbar = () => {
         e.preventDefault()
         closeMenu()
         
-        // Set loading state
-        setLoadingButton(scrollTo)
         setIsScrolling(true)
         
         try {
@@ -83,9 +79,7 @@ const Navbar = () => {
                 }
             }
         } finally {
-            // Clear loading state after a delay
             setTimeout(() => {
-                setLoadingButton(null)
                 setIsScrolling(false)
             }, 500)
         }
@@ -206,30 +200,25 @@ const Navbar = () => {
     return (
         <nav className='flex justify-between border-b-2 border-[#929292] items-center p-3 px-8 md:p-4 md:px-12 lg:px-16 absolute top-0 left-0 right-0 z-50 bg-transparent backdrop-blur-sm'>
             <div>
-                {loadingButton === 'top' ? (
-                    <Skeleton className="w-[40px] h-[40px] md:w-[45px] md:h-[45px] lg:w-[50px] lg:h-[50px] rounded bg-gray-300" />
-                ) : (
-                    <a 
-                        href="#" 
-                        onClick={(e) => !isScrolling && handleNavClick(e, 'top')}
-                        className={`transition-opacity duration-200 ${isScrolling ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
-                    >
-                        <Image 
-                            src="/Neon Edu Logo.png" 
-                            alt="logo" 
-                            width={50} 
-                            height={50}
-                            className="w-[40px] h-[40px] md:w-[45px] md:h-[45px] lg:w-[50px] lg:h-[50px]"
-                        />
-                    </a>
-                )}
+                <a 
+                    href="#" 
+                    onClick={(e) => !isScrolling && handleNavClick(e, 'top')}
+                    className={`transition-opacity duration-200 ${isScrolling ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
+                >
+                    <Image 
+                        src="/Neon Edu Logo.png" 
+                        alt="logo" 
+                        width={50} 
+                        height={50}
+                        className="w-[40px] h-[40px] md:w-[45px] md:h-[45px] lg:w-[50px] lg:h-[50px]"
+                    />
+                </a>
             </div>
             
             {/* Desktop Menu */}
             <div className='hidden md:flex gap-4 md:gap-5 lg:gap-6 h-[18px] md:h-[20px]'>
                 {navItems.map((item) => {
                     const isActive = activeSection === item.scrollTo
-                    const isLoading = loadingButton === item.scrollTo
                     const isDisabled = isScrolling
                     
                     return (
@@ -241,21 +230,12 @@ const Navbar = () => {
                                 isActive ? 'text-[#FF872F]' : 'text-[#2c2c2c]'
                             } ${isDisabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}
                         >
-                            {isLoading ? (
-                                <>
-                                    <Skeleton className="h-3 w-12 md:h-4 md:w-14 lg:h-4 lg:w-16 bg-gray-300" />
-                                    <Skeleton className="h-3 w-12 md:h-4 md:w-14 lg:h-4 lg:w-16 bg-orange-200" />
-                                </>
-                            ) : (
-                                <>
-                                    <p className={`group-hover:-translate-y-[24px] duration-300 ease-in ${isActive ? 'text-[#FF872F]' : ''}`}>
-                                        {item.label}
-                                    </p>
-                                    <p className='group-hover:-translate-y-[24px] duration-300 ease-out text-[#FF872F]'>
-                                        {item.label}
-                                    </p>
-                                </>
-                            )}
+                            <p className={`group-hover:-translate-y-[24px] duration-300 ease-in ${isActive ? 'text-[#FF872F]' : ''}`}>
+                                {item.label}
+                            </p>
+                            <p className='group-hover:-translate-y-[24px] duration-300 ease-out text-[#FF872F]'>
+                                {item.label}
+                            </p>
                         </a>
                     )
                 })}
@@ -339,19 +319,15 @@ const Navbar = () => {
                                         }}
                                         className="text-center"
                                     >
-                                        {loadingButton === item.scrollTo ? (
-                                            <Skeleton className="h-4 w-16 sm:h-5 sm:w-20 bg-gray-300 mx-auto" />
-                                        ) : (
-                                            <a 
-                                                href={item.href} 
-                                                onClick={(e) => !isScrolling && handleNavClick(e, item.scrollTo)}
-                                                className={`font-montserrat text-[16px] sm:text-[18px] font-medium hover:text-[#FF872F] transition-all duration-300 ease-linear block ${
-                                                    activeSection === item.scrollTo ? 'text-[#FF872F]' : 'text-[#2c2c2c]'
-                                                } ${isScrolling ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'} touch-manipulation`}
-                                            >
-                                                {item.label}
-                                            </a>
-                                        )}
+                                        <a 
+                                            href={item.href} 
+                                            onClick={(e) => !isScrolling && handleNavClick(e, item.scrollTo)}
+                                            className={`font-montserrat text-[16px] sm:text-[18px] font-medium hover:text-[#FF872F] transition-all duration-300 ease-linear block ${
+                                                activeSection === item.scrollTo ? 'text-[#FF872F]' : 'text-[#2c2c2c]'
+                                            } ${isScrolling ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'} touch-manipulation`}
+                                        >
+                                            {item.label}
+                                        </a>
                                     </motion.div>
                                 ))}
                             </div>

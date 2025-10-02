@@ -35,7 +35,7 @@ export function getOptimizedImageUrl(
   return `https://res.cloudinary.com/${cloudName}/image/upload/${transformationString}/${publicId}`;
 }
 
-// Predefined optimized URLs for hero images - Using local images for reliability
+// Use local images for hero carousel - they're already optimized and fast
 export const heroImageUrls = {
   neonEduV3: "/Neon Edu v3.png",
   image4: "/4.jpg", 
