@@ -2,6 +2,7 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react'
 import Navbar from '@/components/navbar'
 import Image from 'next/image'
+import { SSRHeroImage, SSRBackgroundImage } from '@/components/SSRImage'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
@@ -29,6 +30,8 @@ export default function Home() {
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
   const [isLoading, setIsLoading] = useState(true)
   const [loadingProgress, setLoadingProgress] = useState(0)
+  const [heroImagesLoaded, setHeroImagesLoaded] = useState(false)
+  const [allImagesLoaded, setAllImagesLoaded] = useState(false)
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -250,38 +253,39 @@ export default function Home() {
     }
   }
 
-  // Preload critical images function - optimized for speed
+  // Progressive loading sequence - hero first, then rest
   const preloadImages = useCallback(async () => {
-    // Only preload the first hero image for instant display
-    const criticalImages = [
-      images[0], // Only the first carousel image
-      "/Neon Edu Logo.png"
-    ]
-
+    // Phase 1: Load hero carousel images first
+    const heroImages = images
     let loadedCount = 0
-    const totalImages = criticalImages.length
+    const totalHeroImages = heroImages.length
 
-    const imagePromises = criticalImages.map((src) => {
+    console.log('Phase 1: Loading hero carousel images...')
+    
+    const heroImagePromises = heroImages.map((src, index) => {
       return new Promise((resolve) => {
         const img = new window.Image()
         
-        // Reduced timeout for faster loading
         const timeout = setTimeout(() => {
           loadedCount++
-          setLoadingProgress(Math.round((loadedCount / totalImages) * 100))
+          const progress = Math.round((loadedCount / totalHeroImages) * 50) // First 50% for hero
+          setLoadingProgress(progress)
           resolve(false)
-        }, 2000) // 2 second timeout per image
+        }, 3000) // 3 second timeout per hero image
         
         img.onload = () => {
           clearTimeout(timeout)
           loadedCount++
-          setLoadingProgress(Math.round((loadedCount / totalImages) * 100))
+          const progress = Math.round((loadedCount / totalHeroImages) * 50) // First 50% for hero
+          setLoadingProgress(progress)
+          console.log(`Hero image ${index + 1} loaded`)
           resolve(true)
         }
         img.onerror = () => {
           clearTimeout(timeout)
           loadedCount++
-          setLoadingProgress(Math.round((loadedCount / totalImages) * 100))
+          const progress = Math.round((loadedCount / totalHeroImages) * 50)
+          setLoadingProgress(progress)
           resolve(false)
         }
         img.src = src
@@ -289,30 +293,46 @@ export default function Home() {
     })
 
     try {
-      await Promise.all(imagePromises)
+      await Promise.all(heroImagePromises)
+      setHeroImagesLoaded(true)
+      console.log('Phase 1 complete: Hero images loaded')
+      
+      // Phase 2: Load remaining images in background
+      console.log('Phase 2: Loading remaining images...')
+      const remainingImages = [
+        "/Neon Edu Logo.png",
+        heroImageUrls.australiaHero,
+        "/ourServiceBgDots.svg"
+      ]
+      
+      const remainingPromises = remainingImages.map((src) => {
+        return new Promise((resolve) => {
+          const img = new window.Image()
+          img.onload = () => resolve(true)
+          img.onerror = () => resolve(false)
+          img.src = src
+        })
+      })
+      
+      await Promise.all(remainingPromises)
+      setAllImagesLoaded(true)
       setLoadingProgress(100)
-      console.log('Critical images preloaded successfully')
+      console.log('Phase 2 complete: All images loaded')
+      
     } catch (error) {
-      console.warn('Some critical images failed to preload:', error)
-      setLoadingProgress(100) // Force completion even if some images fail
+      console.warn('Some images failed to preload:', error)
+      setLoadingProgress(100)
     }
   }, [images])
 
-  // Loading and auto-play functionality - optimized for speed
+  // Progressive loading and auto-play functionality
   useEffect(() => {
-    // Preload critical images and then hide loading screen
+    // Start progressive loading sequence
     const loadEverything = async () => {
       try {
         await preloadImages()
-        // Reduced minimum loading time for faster UX
-        await new Promise(resolve => setTimeout(resolve, 300))
       } catch (error) {
         console.warn('Loading error:', error)
-      } finally {
-        // Always hide loading screen quickly
-        setTimeout(() => {
-          setIsLoading(false)
-        }, 500)
       }
     }
 
@@ -328,6 +348,15 @@ export default function Home() {
       clearInterval(interval)
     }
   }, [images.length, preloadImages])
+
+  // Hide loading screen when hero images are loaded
+  useEffect(() => {
+    if (heroImagesLoaded) {
+      setTimeout(() => {
+        setIsLoading(false)
+      }, 500) // Small delay for smooth transition
+    }
+  }, [heroImagesLoaded])
 
   if (isLoading) {
     return (
@@ -363,7 +392,9 @@ export default function Home() {
             transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
           />
           <div className="flex flex-col items-center gap-2">
-            <p className="text-[#616161] text-sm font-montserrat">Loading content...</p>
+            <p className="text-[#616161] text-sm font-montserrat">
+              {heroImagesLoaded ? 'Loading remaining content...' : 'Loading hero images...'}
+            </p>
             <div className="w-32 h-2 bg-gray-200 rounded-full overflow-hidden">
               <motion.div
                 className="h-full bg-[#FF872F] rounded-full"
@@ -373,6 +404,11 @@ export default function Home() {
               />
             </div>
             <p className="text-[#616161] text-xs font-montserrat">{loadingProgress}%</p>
+            {heroImagesLoaded && (
+              <p className="text-[#FF872F] text-xs font-montserrat animate-pulse">
+                Hero ready! Loading rest...
+              </p>
+            )}
           </div>
         </motion.div>
       </div>
@@ -533,15 +569,10 @@ export default function Home() {
               ease: "easeInOut"
             }}
           >
-            <Image 
+            <SSRBackgroundImage 
               src={heroImageUrls.australiaHero} 
               alt='Australia Dots' 
-              width={700} 
-              height={663.71}
-              loading="lazy"
-              quality={85}
-              placeholder="blur"
-              blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAIAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R//2Q=="
+              className='w-[700px] h-[663.71px] object-contain'
             />
           </motion.div>
         </div>
@@ -568,16 +599,11 @@ export default function Home() {
                     key={index}
                     className='relative w-full h-full flex-shrink-0'
                   >
-                    <Image 
+                    <SSRHeroImage 
                       src={image} 
                       alt={`Image ${index + 1}`} 
-                      fill
                       className='object-cover'
                       priority={index === 0}
-                      sizes="100vw"
-                      quality={85}
-                      placeholder="blur"
-                      blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAAIAAoDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyJckliyjqTzSlT54b6bk+h0R//2Q=="
                     />
                   </div>
                 ))}
@@ -658,13 +684,10 @@ export default function Home() {
                 viewport={{ once: true, amount: 0.3 }}
                 transition={{ duration: 0.6, delay: 0.1, ease: [0.25, 0.46, 0.45, 0.94] }}
               >
-                <Image 
+                <SSRBackgroundImage 
                   src="/ourServiceBgDots.svg" 
                   alt='Our Service' 
-                  width={643} 
-                  height={489}
-                  loading="lazy"
-                  quality={85}
+                  className='w-[643px] h-[489px] object-contain'
                 />
               </motion.div>
             
