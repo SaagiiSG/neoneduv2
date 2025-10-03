@@ -44,7 +44,7 @@ export default function SSRImage({
     ...(sizes && { sizes })
   };
 
-  return <Image {...imageProps} />;
+  return <Image {...imageProps} alt={alt} />;
 }
 
 // Pre-optimized hero image component for SSR

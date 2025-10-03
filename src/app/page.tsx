@@ -1,3 +1,4 @@
+'use client'
 import React, { useState, useEffect, useCallback, useMemo } from 'react'
 import Navbar from '@/components/navbar'
 import Image from 'next/image'
@@ -55,11 +56,53 @@ function HomeClient({
   const [copiedEmail, setCopiedEmail] = useState<string | null>(null)
   const shouldReduceMotion = useReducedMotion()
   
-  // Use SSR data as initial state
+  // Use initial data as state, with optimized client-side fetching
   const [teamData, setTeamData] = useState<TeamMember[]>(initialTeamData)
   const [courseData, setCourseData] = useState<Course[]>(initialCourseData)
   const [studyAbroadData, setStudyAbroadData] = useState<StudyAbroadProgram[]>(initialStudyAbroadData)
   const [historyData, setHistoryData] = useState<HistoryItem[]>(initialHistoryData)
+  
+  // Optimized data fetching with reduced timeout
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        // Reduced timeout for faster loading
+        const timeoutPromise = new Promise((_, reject) => 
+          setTimeout(() => reject(new Error('Database timeout')), 5000) // 5 second timeout
+        );
+
+        const dataPromise = Promise.all([
+          getTeamMembers(),
+          getCourses(),
+          getStudyAbroadPrograms(),
+          getHistoryData()
+        ]);
+
+        const result = await Promise.race([
+          dataPromise,
+          timeoutPromise
+        ]) as [any[], any[], any[], any[]];
+        
+        const [teamMembers, courses, studyAbroad, history] = result;
+        
+        const transformedTeam = transformTeamData(teamMembers);
+        const transformedCourses = transformCourseData(courses);
+        
+        setTeamData(transformedTeam);
+        setCourseData(transformedCourses);
+        setStudyAbroadData(transformStudyAbroadData(studyAbroad));
+        setHistoryData(history || []);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+        // Keep initial data if fetch fails
+      }
+    };
+
+    // Only fetch if we don't have initial data
+    if (initialTeamData.length === 0) {
+      fetchData();
+    }
+  }, [initialTeamData.length]);
 
   const images = useMemo(() => [
     heroImageUrls.neonEduV3,
@@ -1364,37 +1407,15 @@ function HomeClient({
   )
 }
 
-// Server component for SSR data fetching
-export default async function Home() {
-  // Fetch data on the server for faster initial load
-  let teamData: TeamMember[] = [];
-  let courseData: Course[] = [];
-  let studyAbroadData: StudyAbroadProgram[] = [];
-  let historyData: HistoryItem[] = [];
-
-  try {
-    const [teamMembers, courses, studyAbroad, history] = await Promise.all([
-      getTeamMembers(),
-      getCourses(),
-      getStudyAbroadPrograms(),
-      getHistoryData()
-    ]);
-
-    teamData = transformTeamData(teamMembers);
-    courseData = transformCourseData(courses);
-    studyAbroadData = transformStudyAbroadData(studyAbroad);
-    historyData = history || [];
-  } catch (error) {
-    console.error('Error fetching SSR data:', error);
-    // Fallback to empty arrays - client will handle gracefully
-  }
-
+// Main component with optimized client-side data fetching
+export default function Home() {
+  // Use empty arrays as initial state - data will be fetched on client
   return (
     <HomeClient 
-      initialTeamData={teamData}
-      initialCourseData={courseData}
-      initialStudyAbroadData={studyAbroadData}
-      initialHistoryData={historyData}
+      initialTeamData={[]}
+      initialCourseData={[]}
+      initialStudyAbroadData={[]}
+      initialHistoryData={[]}
     />
   );
 }
