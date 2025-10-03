@@ -79,41 +79,51 @@ export function optimizeImageUrl(
 
 // Optimized hero carousel images with Cloudinary transformations
 export const heroImageUrls = {
-  neonEduV3: getOptimizedImageUrl('neonedu/hero/neon-edu-v3', { 
-    width: 1200, 
-    height: 800, 
-    quality: 'auto:good',
-    format: 'webp',
-    crop: 'fill'
-  }),
-  image4: getOptimizedImageUrl('neonedu/hero/image-4', { 
-    width: 1200, 
-    height: 800, 
-    quality: 'auto:good',
-    format: 'webp',
-    crop: 'fill'
-  }), 
-  neonEduV3Alt: getOptimizedImageUrl('neonedu/hero/neon-edu-v3-alt', { 
-    width: 1200, 
-    height: 800, 
-    quality: 'auto:good',
-    format: 'webp',
-    crop: 'fill'
-  }),
-  neonEduImage: getOptimizedImageUrl('neonedu/hero/neon-edu-image', { 
-    width: 1200, 
-    height: 800, 
-    quality: 'auto:good',
-    format: 'webp',
-    crop: 'fill'
-  }),
-  australiaHero: getOptimizedImageUrl('neonedu/hero/australia-hero', { 
-    width: 800, 
-    height: 600, 
-    quality: 'auto:good',
-    format: 'webp',
-    crop: 'limit'
-  })
+  neonEduV3: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME && process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME !== 'demo' 
+    ? getOptimizedImageUrl('neonedu/hero/neon-edu-v3', { 
+        width: 1200, 
+        height: 800, 
+        quality: 'auto:good',
+        format: 'webp',
+        crop: 'fill'
+      })
+    : "/Neon Edu v3.png",
+  image4: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME && process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME !== 'demo'
+    ? getOptimizedImageUrl('neonedu/hero/image-4', { 
+        width: 1200, 
+        height: 800, 
+        quality: 'auto:good',
+        format: 'webp',
+        crop: 'fill'
+      })
+    : "/4.jpg", 
+  neonEduV3Alt: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME && process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME !== 'demo'
+    ? getOptimizedImageUrl('neonedu/hero/neon-edu-v3-alt', { 
+        width: 1200, 
+        height: 800, 
+        quality: 'auto:good',
+        format: 'webp',
+        crop: 'fill'
+      })
+    : "/Neon Edu v3 (1).png",
+  neonEduImage: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME && process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME !== 'demo'
+    ? getOptimizedImageUrl('neonedu/hero/neon-edu-image', { 
+        width: 1200, 
+        height: 800, 
+        quality: 'auto:good',
+        format: 'webp',
+        crop: 'fill'
+      })
+    : "/Neon Edu v3 Image.png",
+  australiaHero: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME && process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME !== 'demo'
+    ? getOptimizedImageUrl('neonedu/hero/australia-hero', { 
+        width: 800, 
+        height: 600, 
+        quality: 'auto:good',
+        format: 'webp',
+        crop: 'limit'
+      })
+    : "/Australia Hero Neon Edu.png"
 };
 
 // Fallback to original URLs if Cloudinary fails
@@ -129,10 +139,12 @@ export const fallbackImageUrls = {
 export const preloadImageUrls = [
   heroImageUrls.neonEduV3,
   heroImageUrls.australiaHero,
-  getOptimizedImageUrl('neonedu/assets/logo', { 
-    width: 200, 
-    height: 200, 
-    quality: 'auto:good',
-    format: 'webp'
-  })
+  process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME && process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME !== 'demo'
+    ? getOptimizedImageUrl('neonedu/assets/logo', { 
+        width: 200, 
+        height: 200, 
+        quality: 'auto:good',
+        format: 'webp'
+      })
+    : "/Neon Edu Logo.png"
 ];
