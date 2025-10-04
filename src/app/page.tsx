@@ -572,10 +572,12 @@ function HomeClient({
               ease: "easeInOut"
             }}
           >
-            <SSRBackgroundImage 
+            <Image 
               src={heroImageUrls.australiaHero} 
               alt='Australia Dots' 
-              className='w-[700px] h-[663.71px] object-contain z-0 opacity-50'
+              width={700}
+              height={664}
+              className='object-contain z-0 opacity-50'
             />
           </motion.div>
         </div>
