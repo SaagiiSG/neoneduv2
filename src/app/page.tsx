@@ -557,7 +557,7 @@ function HomeClient({
             </div>
           </motion.div>
           <motion.div
-            className='md:mt-16 absolute top-24 md:right-[64px] right-0 z-0 '
+            className='md:mt-16 absolute top-24 md:right-[64px] right-0 z-0'
             style={{ 
               willChange: 'transform',
               backfaceVisibility: 'hidden',
@@ -575,7 +575,7 @@ function HomeClient({
             <SSRBackgroundImage 
               src={heroImageUrls.australiaHero} 
               alt='Australia Dots' 
-              className='w-[700px] h-[663.71px] object-contain z-50'
+              className='w-[700px] h-[663.71px] object-contain z-0 opacity-50'
             />
           </motion.div>
         </div>

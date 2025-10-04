@@ -107,7 +107,7 @@ export const heroImageUrls = {
       })
     : "/Neon Edu v3 (1).png",
   neonEduImage: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME && process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME !== 'demo'
-    ? getOptimizedImageUrl('neonedu/hero/neon-edu-image', { 
+    ? getOptimizedImageUrl('neonedu/hero/australia-hero', { 
         width: 1200, 
         height: 800, 
         quality: 'auto:good',
