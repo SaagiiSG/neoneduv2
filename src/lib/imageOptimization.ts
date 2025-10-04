@@ -18,7 +18,7 @@ export function getOptimizedImageUrl(
     quality = 'auto:good',
     format = 'auto',
     crop = 'fill',
-    gravity = 'auto'
+    gravity
   } = options;
 
   let transformations = [];
