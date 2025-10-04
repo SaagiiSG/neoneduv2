@@ -116,14 +116,14 @@ export const heroImageUrls = {
       })
     : "/Neon Edu v3 Image.png",
   australiaHero: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME && process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME !== 'demo'
-    ? getOptimizedImageUrl('neonedu/backgrounds/australia-dots', { 
+    ? getOptimizedImageUrl('neonedu/hero/australia-hero', { 
         width: 800, 
         height: 600, 
         quality: 'auto:good',
         format: 'webp',
         crop: 'limit'
       })
-    : "/Australia Dots Neon Edu.svg"
+    : "/Australia Hero Neon Edu.png"
 };
 
 // Fallback to original URLs if Cloudinary fails
@@ -132,7 +132,7 @@ export const fallbackImageUrls = {
   image4: "/4.jpg",
   neonEduV3Alt: "/Neon Edu v3 (1).png",
   neonEduImage: "/Neon Edu v3 Image.png",
-  australiaHero: "/Australia Dots Neon Edu.svg"
+  australiaHero: "/Australia Hero Neon Edu.png"
 };
 
 // Preload critical images for faster loading
