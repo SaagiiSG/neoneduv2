@@ -563,13 +563,16 @@ function HomeClient({
               backfaceVisibility: 'hidden',
               transform: 'translate3d(0, 0, 0)'
             }}
-            animate={shouldReduceMotion ? {} : { 
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={shouldReduceMotion ? { opacity: 1, scale: 1 } : { 
+              opacity: 1,
+              scale: 1,
               y: [0, -8, 0]
             }}
-            transition={shouldReduceMotion ? {} : { 
-              duration: 4,
-              repeat: Infinity,
-              ease: "easeInOut"
+            transition={shouldReduceMotion ? { duration: 0.8, ease: [0.25, 0.46, 0.45, 0.94] } : { 
+              opacity: { duration: 0.8, ease: [0.25, 0.46, 0.45, 0.94] },
+              scale: { duration: 0.8, ease: [0.25, 0.46, 0.45, 0.94] },
+              y: { duration: 4, repeat: Infinity, ease: "easeInOut" }
             }}
           >
             <Image 
@@ -577,7 +580,7 @@ function HomeClient({
               alt='Australia Dots' 
               width={700}
               height={664}
-              className='object-contain z-0 opacity-50'
+              className='object-contain z-0'
             />
           </motion.div>
         </div>
@@ -593,16 +596,23 @@ function HomeClient({
             {/* image carousel with scrolling animation */}
             <div className='absolute top-0 left-0 w-full h-full rounded-4xl overflow-hidden z-10'>
               <div 
-                className='flex h-full transition-transform duration-500 ease-out'
+                className='flex h-full transition-transform duration-700 ease-[cubic-bezier(0.25,0.46,0.45,0.94)]'
                 style={{ 
                   transform: `translate3d(-${currentImageIndex * 100}%, 0, 0)`,
                   willChange: 'transform'
                 }}
               >
                 {images.map((image, index) => (
-                  <div 
+                  <motion.div 
                     key={index}
                     className='relative w-full h-full flex-shrink-0'
+                    initial={{ opacity: 0, scale: 1.05 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ 
+                      duration: 0.8, 
+                      ease: [0.25, 0.46, 0.45, 0.94],
+                      delay: index * 0.1
+                    }}
                   >
                     <SSRHeroImage 
                       src={image} 
@@ -610,7 +620,7 @@ function HomeClient({
                       className='object-cover'
                       priority={index === 0}
                     />
-                  </div>
+                  </motion.div>
                 ))}
               </div>
             </div>
