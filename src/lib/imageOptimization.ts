@@ -115,15 +115,7 @@ export const heroImageUrls = {
         crop: 'fill'
       })
     : "/Neon Edu v3 Image.png",
-  australiaHero: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME && process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME !== 'demo'
-    ? getOptimizedImageUrl('neonedu/backgrounds/australia-dots', { 
-        width: 800, 
-        height: 600, 
-        quality: 'auto:good',
-        format: 'auto',
-        crop: 'limit'
-      })
-    : "/Australia Dots Neon Edu.svg"
+  australiaHero: "/Australia Dots Neon Edu.svg"
 };
 
 // Fallback to original URLs if Cloudinary fails
