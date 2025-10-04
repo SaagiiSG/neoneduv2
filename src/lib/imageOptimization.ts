@@ -115,7 +115,7 @@ export const heroImageUrls = {
         crop: 'fill'
       })
     : "/Neon Edu v3 Image.png",
-  australiaHero: "/Australia Dots Neon Edu.svg"
+  australiaHero: "/Australia Hero Neon Edu.png"
 };
 
 // Fallback to original URLs if Cloudinary fails
@@ -124,7 +124,7 @@ export const fallbackImageUrls = {
   image4: "/4.jpg",
   neonEduV3Alt: "/Neon Edu v3 (1).png",
   neonEduImage: "/Neon Edu v3 Image.png",
-  australiaHero: "/Australia Dots Neon Edu.svg"
+  australiaHero: "/Australia Hero Neon Edu.png"
 };
 
 // Preload critical images for faster loading
