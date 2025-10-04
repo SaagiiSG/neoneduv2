@@ -28,7 +28,7 @@ export function getOptimizedImageUrl(
   transformations.push(`q_${quality}`);
   transformations.push(`f_${format}`);
   transformations.push(`c_${crop}`);
-  if (gravity) transformations.push(`g_${gravity}`);
+  if (gravity && gravity !== undefined) transformations.push(`g_${gravity}`);
 
   const transformationString = transformations.join(',');
   
@@ -120,7 +120,7 @@ export const heroImageUrls = {
         width: 800, 
         height: 600, 
         quality: 'auto:good',
-        format: 'webp',
+        format: 'auto',
         crop: 'limit'
       })
     : "/Australia Hero Neon Edu.png"
